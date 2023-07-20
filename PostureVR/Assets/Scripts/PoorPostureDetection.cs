@@ -17,27 +17,39 @@ public class PoorPostureDetection : MonoBehaviour
     private bool m_isHeightRecorded = false;
     private bool m_isMinHeightRecorded = false;
 
-    public float heightThreshold;
-    public float angleThreshold;
+    //public float heightThreshold;
+    public float upperAngleThreshold;
+    public float lowerAngleThreshold;
+
 
     public float holdAndReleaseTime;
-    private float holdTimer;
+    private float holdTimerTrigger;
     private float holdTimerGrip;
 
     private bool m_isPoorPosture = false;
+    public bool isPoorPostureNotified = false;
 
     [SerializeField]
     private GameObject Screen;
 
     [SerializeField]
     GameObject uiAngleValue;
-    
+
+    [SerializeField]
+    GameObject dot;
+
+    private Vector3 dotInitialPosition;
+    public float dotSpeed;
+    private float dotPosition = 0f;
+
+    public GameObject center;
 
     void Start()
     {
-        holdTimer = holdAndReleaseTime;
+        holdTimerTrigger = holdAndReleaseTime;
         holdTimerGrip = holdAndReleaseTime;
         TryInitialize();
+        dotInitialPosition = dot.transform.localPosition;
     }
 
     void TryInitialize()
@@ -55,116 +67,12 @@ public class PoorPostureDetection : MonoBehaviour
     {
         if (m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue) && triggerValue)
         {
-            holdTimer -= Time.deltaTime;
-            if (holdTimer < 0)
+            holdTimerTrigger -= Time.deltaTime;
+            if (holdTimerTrigger < 0)
             {
-                //m_height = Mathf.Ceil(Camera.main.transform.position.y * 100f);
-                //m_height = m_height / 100f;
                 m_height = Camera.main.transform.position.y;
                 m_isHeightRecorded = true;
             }
-        }
-    }
-
-    void PostureDetection()
-    {
-        float CurrentHeight = Mathf.Floor(Camera.main.transform.position.y * 100f);
-        CurrentHeight = CurrentHeight / 100f;        
-
-        if ((Camera.main.transform.eulerAngles.x >= angleThreshold && Camera.main.transform.eulerAngles.x <= 50f))
-        {
-            m_isPoorPosture = true;
-        }
-
-        if (m_height - CurrentHeight >= heightThreshold && (Camera.main.transform.eulerAngles.x < 3f && Camera.main.transform.eulerAngles.x > 357f))
-        {
-            m_isPoorPosture = true;
-        }
-        
-        if (Camera.main.transform.eulerAngles.x < angleThreshold)
-        {
-            m_isPoorPosture = false;
-            // if (m_height - CurrentHeight >= heightThreshold)
-            // time count 
-        }
-
-        if (m_height - CurrentHeight >= heightThreshold * 1.5f)
-        {
-            m_isPoorPosture = true;
-        }
-
-        if (m_height - CurrentHeight < heightThreshold)
-        {
-            m_isPoorPosture = false;
-        }
-
-        if (m_isPoorPosture)
-        {
-            Screen.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
-        }
-        else
-        {
-            Screen.GetComponent<Renderer>().material.color = new Color(1, 1, 1);
-        }
-    }
-
-    float CalculateSafeHeight(float angle)
-    {
-        float angleRad = angle * Mathf.Deg2Rad;
-        Debug.Log("Values:");
-        Debug.Log("Euler angle: " + angle);
-        Debug.Log("Radian angle: " + angleRad);
-        Debug.Log("My height: " + m_height);
-        Debug.Log("My min height: " + m_minHeight);
-        
-        float safeHeight = m_height - m_neck + m_neck * Mathf.Cos(angleRad);
-        //safeHeight = Mathf.Ceil(safeHeight * 100f);
-        //safeHeight = safeHeight / 100f;
-        
-        return safeHeight;
-    }
-
-    void PostureDetection2()
-    {
-        /*
-        if ((Camera.main.transform.eulerAngles.x >= angleThreshold && Camera.main.transform.eulerAngles.x <= 50f))
-        {
-            m_isPoorPosture = true;
-        }
-        else
-        {
-            m_isPoorPosture = false;
-        }*/
-
-        //float currentHeight = Mathf.Floor(Camera.main.transform.position.y * 100f);
-        //currentHeight = currentHeight / 100f;
-
-        float currentHeight = Camera.main.transform.position.y;
-
-        if (Camera.main.transform.eulerAngles.x < angleThreshold)
-        {
-            float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
-            float safeHeight = CalculateSafeHeight(Camera.main.transform.eulerAngles.x);
-            Debug.Log("Safe height: " + safeHeight);
-            uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = "Safe height: " + safeHeight.ToString() + " Current height: " + currentHeight.ToString()
-                                                                    + " Angle: " + angle;
-            if (safeHeight - currentHeight >= 0.015f)
-            {
-                m_isPoorPosture = true;
-            }
-            else
-            {
-                m_isPoorPosture = false;
-            }
-        }
-
-        if (m_isPoorPosture)
-        {
-            Screen.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
-        }
-        else
-        {
-            Screen.GetComponent<Renderer>().material.color = new Color(1, 1, 1);
         }
     }
 
@@ -175,18 +83,80 @@ public class PoorPostureDetection : MonoBehaviour
             holdTimerGrip -= Time.deltaTime;
             if (holdTimerGrip < 0)
             {
-                m_minHeight = Mathf.Ceil(Camera.main.transform.position.y * 100f);
-                m_minHeight = m_minHeight / 100f;
+                m_minHeight = Camera.main.transform.position.y;
                 m_isMinHeightRecorded = true;
             }
         }
         m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(Camera.main.transform.eulerAngles.x * Mathf.Deg2Rad));
     }
 
-    void DisplayHeadMovementValues()
+    float CalculateSafeHeight(float angle)
+    {
+        float angleRad = angle * Mathf.Deg2Rad;
+        float safeHeight = m_height - m_neck + m_neck * Mathf.Cos(angleRad);
+        return safeHeight;
+    }
+
+    void PostureDetection()
+    {
+        
+        float currentHeight = Camera.main.transform.position.y;
+
+        if (Camera.main.transform.eulerAngles.x < upperAngleThreshold || Camera.main.transform.eulerAngles.x > lowerAngleThreshold)
+        {
+            float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
+            float safeHeight = CalculateSafeHeight(Camera.main.transform.eulerAngles.x);
+            Debug.Log("Safe height: " + safeHeight);
+            uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = "Safe height: " + safeHeight.ToString() + " Current height: " + currentHeight.ToString()
+                                                                    + " Angle: " + angle;
+            if (safeHeight - currentHeight >= 0.0115f)
+            {
+                m_isPoorPosture = true;
+            }
+            else
+            {
+                m_isPoorPosture = false;
+            }
+        }
+        else
+        {
+            m_isPoorPosture = true;
+        }
+
+        if (m_isPoorPosture)
+        {
+            Screen.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
+        }
+        else
+        {
+            Screen.GetComponent<Renderer>().material.color = new Color(1, 1, 1);
+        }
+    }
+
+    void DisplayTiltAngle()
     {
         float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
         uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = angle.ToString();
+    }
+
+    void DotMovement()
+    {
+        center.transform.position = Camera.main.transform.position;
+        if (isPoorPostureNotified)
+        {
+            dot.SetActive(true);
+            dot.transform.parent = null;
+            float dotStep = dotSpeed * Time.deltaTime;
+            Vector3 targetPosition = new Vector3(dot.transform.position.x, 2f, dot.transform.position.z);
+            dot.transform.position = Vector3.MoveTowards(dot.transform.position, targetPosition, dotStep);
+        }
+        else
+        {
+            center.transform.rotation = Camera.main.transform.rotation;
+            dot.transform.parent = Camera.main.gameObject.transform;
+            dot.transform.localPosition = dotInitialPosition;
+            dot.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -210,14 +180,14 @@ public class PoorPostureDetection : MonoBehaviour
             
             if (m_isHeightRecorded && m_isMinHeightRecorded)
             {
-                PostureDetection2();
+                PostureDetection();
             }
             else
             {
-                DisplayHeadMovementValues();
+                DisplayTiltAngle();
             }
             
         }
-        
+        DotMovement();
     }
 }

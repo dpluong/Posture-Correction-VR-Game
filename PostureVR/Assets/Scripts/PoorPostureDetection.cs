@@ -26,7 +26,7 @@ public class PoorPostureDetection : MonoBehaviour
     private float holdTimerTrigger;
     private float holdTimerGrip;
 
-    private bool m_isPoorPosture = false;
+    public bool m_isPoorPosture = false;
     public bool isPoorPostureNotified = false;
 
     [SerializeField]
@@ -42,7 +42,9 @@ public class PoorPostureDetection : MonoBehaviour
     public float dotSpeed;
     private float dotPosition = 0f;
 
-    public GameObject center;
+    private float poorPostureTime = 0f;
+    private float dotStartMovingTime = 0f;
+    public float dotEndMovingTime = 0f;
 
     void Start()
     {
@@ -106,7 +108,6 @@ public class PoorPostureDetection : MonoBehaviour
         {
             float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
             float safeHeight = CalculateSafeHeight(Camera.main.transform.eulerAngles.x);
-            Debug.Log("Safe height: " + safeHeight);
             uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = "Safe height: " + safeHeight.ToString() + " Current height: " + currentHeight.ToString()
                                                                     + " Angle: " + angle;
             if (safeHeight - currentHeight >= 0.0115f)
@@ -141,18 +142,27 @@ public class PoorPostureDetection : MonoBehaviour
 
     void DotMovement()
     {
-        center.transform.position = Camera.main.transform.position;
-        if (isPoorPostureNotified)
+        //center.transform.position = Camera.main.transform.position;
+        if (m_isPoorPosture && poorPostureTime >= 3f)
         {
             dot.SetActive(true);
             dot.transform.parent = null;
-            float dotStep = dotSpeed * Time.deltaTime;
-            Vector3 targetPosition = new Vector3(dot.transform.position.x, 2f, dot.transform.position.z);
-            dot.transform.position = Vector3.MoveTowards(dot.transform.position, targetPosition, dotStep);
+            //float dotStep = dotSpeed * Time.deltaTime;
+            //Vector3 targetPosition = new Vector3(dot.transform.position.x, 2f, dot.transform.position.z);
+            //dot.transform.position = Vector3.MoveTowards(dot.transform.position, targetPosition, dotStep);
+
+            dot.transform.Translate(Vector3.up * dotSpeed * Time.deltaTime);
+            dotStartMovingTime += Time.deltaTime;
+            if (dotStartMovingTime >= dotEndMovingTime)
+            {
+                dot.transform.parent = Camera.main.gameObject.transform;
+                dot.transform.localPosition = dotInitialPosition;
+                dotStartMovingTime = 0f;
+            }
         }
         else
         {
-            center.transform.rotation = Camera.main.transform.rotation;
+            //center.transform.rotation = Camera.main.transform.rotation;
             dot.transform.parent = Camera.main.gameObject.transform;
             dot.transform.localPosition = dotInitialPosition;
             dot.SetActive(false);
@@ -162,6 +172,7 @@ public class PoorPostureDetection : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(Camera.main.transform.localPosition.y);
         if (!m_targetDevice.isValid)
         {
             TryInitialize();
@@ -189,5 +200,15 @@ public class PoorPostureDetection : MonoBehaviour
             
         }
         DotMovement();
+
+        if (m_isPoorPosture)
+        {
+            poorPostureTime += Time.deltaTime;
+        }
+        else
+        {
+            poorPostureTime = 0f;
+            dotStartMovingTime = 0f;
+        }
     }
 }

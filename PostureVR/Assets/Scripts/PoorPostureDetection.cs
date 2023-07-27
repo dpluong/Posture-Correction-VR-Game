@@ -42,9 +42,11 @@ public class PoorPostureDetection : MonoBehaviour
     public float dotSpeed;
     private float dotPosition = 0f;
 
-    private float poorPostureTime = 0f;
+    public float poorPostureTime = 0f;
     private float dotStartMovingTime = 0f;
     public float dotEndMovingTime = 0f;
+
+    public float poorPostureTimeThreshold = 3f;
 
     void Start()
     {
@@ -72,7 +74,7 @@ public class PoorPostureDetection : MonoBehaviour
             holdTimerTrigger -= Time.deltaTime;
             if (holdTimerTrigger < 0)
             {
-                m_height = Camera.main.transform.position.y;
+                m_height = Camera.main.transform.localPosition.y;
                 m_isHeightRecorded = true;
             }
         }
@@ -85,7 +87,7 @@ public class PoorPostureDetection : MonoBehaviour
             holdTimerGrip -= Time.deltaTime;
             if (holdTimerGrip < 0)
             {
-                m_minHeight = Camera.main.transform.position.y;
+                m_minHeight = Camera.main.transform.localPosition.y;
                 m_isMinHeightRecorded = true;
             }
         }
@@ -102,7 +104,7 @@ public class PoorPostureDetection : MonoBehaviour
     void PostureDetection()
     {
         
-        float currentHeight = Camera.main.transform.position.y;
+        float currentHeight = Camera.main.transform.localPosition.y;
 
         if (Camera.main.transform.eulerAngles.x < upperAngleThreshold || Camera.main.transform.eulerAngles.x > lowerAngleThreshold)
         {
@@ -124,6 +126,7 @@ public class PoorPostureDetection : MonoBehaviour
             m_isPoorPosture = true;
         }
 
+        /*
         if (m_isPoorPosture)
         {
             Screen.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
@@ -131,7 +134,7 @@ public class PoorPostureDetection : MonoBehaviour
         else
         {
             Screen.GetComponent<Renderer>().material.color = new Color(1, 1, 1);
-        }
+        }*/
     }
 
     void DisplayTiltAngle()
@@ -169,10 +172,14 @@ public class PoorPostureDetection : MonoBehaviour
         }
     }
 
+    public bool IsPoorPosture()
+    {
+        return m_isPoorPosture;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(Camera.main.transform.localPosition.y);
         if (!m_targetDevice.isValid)
         {
             TryInitialize();

@@ -14,10 +14,18 @@ public class VisualNotifications : MonoBehaviour
 
     private float[] startWindStrength;
 
+    private bool isWindStrengthIncreased = false;
+
+    //private bool isInCoroutine = false;
+
+    public float timeToChangePosture = 3f;
+
     float time;
 
-    void IncreaseWindStrength()
+    IEnumerator IncreaseWindStrength()
     {
+        //isInCoroutine = true;
+        yield return new WaitForSeconds(timeToChangePosture);
         while (time < duration)
         {
             for (int matIndex = 0; matIndex < materials.Count; ++matIndex)
@@ -26,6 +34,7 @@ public class VisualNotifications : MonoBehaviour
                 materials[matIndex].SetFloat("_WindStrength", windStrength);
             }
             time += Time.deltaTime * 0.5f;
+            yield return new WaitForSeconds(1f);
         }
 
         if (time >= duration)
@@ -35,10 +44,13 @@ public class VisualNotifications : MonoBehaviour
                 materials[matIndex].SetFloat("_WindStrength", 1f);
             }
         }
+
+        isWindStrengthIncreased = true;
     }
 
     void DecreaseWindStrength()
     {
+        time = 0f;
         while (time < duration)
         {
             for (int matIndex = 0; matIndex < materials.Count; ++matIndex)
@@ -47,6 +59,7 @@ public class VisualNotifications : MonoBehaviour
                 materials[matIndex].SetFloat("_WindStrength", windStrength);
             }
             time += Time.deltaTime * 0.5f;
+            //yield return new WaitForSeconds(1f);
         }
     }
 
@@ -55,7 +68,6 @@ public class VisualNotifications : MonoBehaviour
         for (int matIndex = 0; matIndex < materials.Count; ++matIndex)
         {
             materials[matIndex].SetFloat("_WindStrength", startWindStrength[matIndex]);
-            time = 0f;
         }
     }
 
@@ -63,14 +75,15 @@ public class VisualNotifications : MonoBehaviour
     {
         for (int matIndex = 0; matIndex < materials.Count; ++matIndex)
         {
-            startWindStrength[matIndex] = materials[matIndex].GetFloat("_WindStrength");
-            time = 0f;
+            startWindStrength[matIndex] = 0.1f;
+            materials[matIndex].SetFloat("_WindStrength", startWindStrength[matIndex]);
         }
     }
 
     void Start()
     {
         startWindStrength = new float[materials.Count];
+        time = 0f;
         InitWindStrengthValues();
     }
     // Update is called once per frame
@@ -78,17 +91,16 @@ public class VisualNotifications : MonoBehaviour
     {
         if (postureDetectionMethod.m_isPoorPosture)
         {
-            IncreaseWindStrength();
+            StartCoroutine(IncreaseWindStrength());
         }
         else
         {
-            time = 0f;
-            DecreaseWindStrength();
+            if (isWindStrengthIncreased)
+            {
+                DecreaseWindStrength();
+                ResetWindStrength();
+                isWindStrengthIncreased = false;
+            }
         }
-    }
-
-    private void OnApplicationQuit() 
-    {
-        ResetWindStrength();
     }
 }

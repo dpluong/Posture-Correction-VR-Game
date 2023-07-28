@@ -38,6 +38,9 @@ public class PoorPostureDetection : MonoBehaviour
     [SerializeField]
     GameObject dot;
 
+    [SerializeField]
+    GameObject destination;
+
     private Vector3 dotInitialPosition;
     public float dotSpeed;
     private float dotPosition = 0f;
@@ -112,7 +115,7 @@ public class PoorPostureDetection : MonoBehaviour
             float safeHeight = CalculateSafeHeight(Camera.main.transform.eulerAngles.x);
             uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = "Safe height: " + safeHeight.ToString() + " Current height: " + currentHeight.ToString()
                                                                     + " Angle: " + angle;
-            if (safeHeight - currentHeight >= 0.0115f)
+            if (safeHeight - currentHeight >= 0.013f)
             {
                 m_isPoorPosture = true;
             }
@@ -146,7 +149,7 @@ public class PoorPostureDetection : MonoBehaviour
     void DotMovement()
     {
         //center.transform.position = Camera.main.transform.position;
-        if (m_isPoorPosture && poorPostureTime >= 3f)
+        if (m_isPoorPosture && poorPostureTime >= poorPostureTimeThreshold)
         {
             dot.SetActive(true);
             dot.transform.parent = null;
@@ -154,7 +157,9 @@ public class PoorPostureDetection : MonoBehaviour
             //Vector3 targetPosition = new Vector3(dot.transform.position.x, 2f, dot.transform.position.z);
             //dot.transform.position = Vector3.MoveTowards(dot.transform.position, targetPosition, dotStep);
 
-            dot.transform.Translate(Vector3.up * dotSpeed * Time.deltaTime);
+            //dot.transform.Translate(Vector3.up * dotSpeed * Time.deltaTime);
+            //dot.transform.Translate(Vector3.forward * dotSpeed * Time.deltaTime);
+            dot.transform.position = Vector3.MoveTowards(dot.transform.position, destination.transform.position, dotSpeed * Time.deltaTime);
             dotStartMovingTime += Time.deltaTime;
             if (dotStartMovingTime >= dotEndMovingTime)
             {

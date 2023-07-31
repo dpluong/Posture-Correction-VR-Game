@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
+using UnityEngine.UI;
 using TMPro;
 
 public class PoorPostureDetection : MonoBehaviour
@@ -41,7 +42,12 @@ public class PoorPostureDetection : MonoBehaviour
     [SerializeField]
     GameObject destination;
 
+    [SerializeField]
+    GameObject slider;
+
     private Vector3 dotInitialPosition;
+    private Vector3 dotInitialRotation;
+
     public float dotSpeed;
     private float dotPosition = 0f;
 
@@ -57,6 +63,7 @@ public class PoorPostureDetection : MonoBehaviour
         holdTimerGrip = holdAndReleaseTime;
         TryInitialize();
         dotInitialPosition = dot.transform.localPosition;
+        dotInitialRotation = dot.transform.localEulerAngles;
     }
 
     void TryInitialize()
@@ -80,6 +87,7 @@ public class PoorPostureDetection : MonoBehaviour
                 m_height = Camera.main.transform.localPosition.y;
                 m_isHeightRecorded = true;
             }
+            StartCoroutine(HoldButtonSlider());
         }
     }
 
@@ -93,6 +101,7 @@ public class PoorPostureDetection : MonoBehaviour
                 m_minHeight = Camera.main.transform.localPosition.y;
                 m_isMinHeightRecorded = true;
             }
+            StartCoroutine(HoldButtonSlider());
         }
         m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(Camera.main.transform.eulerAngles.x * Mathf.Deg2Rad));
     }
@@ -173,6 +182,7 @@ public class PoorPostureDetection : MonoBehaviour
             //center.transform.rotation = Camera.main.transform.rotation;
             dot.transform.parent = Camera.main.gameObject.transform;
             dot.transform.localPosition = dotInitialPosition;
+            dot.transform.localEulerAngles = dotInitialRotation;
             dot.SetActive(false);
         }
     }
@@ -180,6 +190,21 @@ public class PoorPostureDetection : MonoBehaviour
     public bool IsPoorPosture()
     {
         return m_isPoorPosture;
+    }
+
+    IEnumerator HoldButtonSlider()
+    {
+        float time = 0f;
+        slider.SetActive(true);
+        while (time < holdAndReleaseTime)
+        {
+            slider.GetComponent<Slider>().value = Mathf.Lerp(0f, 1f, time / holdAndReleaseTime);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        slider.GetComponent<Slider>().value = 1f;
+        slider.SetActive(false);
     }
 
     // Update is called once per frame

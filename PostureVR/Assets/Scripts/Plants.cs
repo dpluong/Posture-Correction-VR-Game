@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class VisualNotifications : MonoBehaviour
-{
-    // Start is called before the first frame update
-
+public class Plants : MonoBehaviour
+{    
     public List<Material> materials;
 
     public PoorPostureDetection postureDetectionMethod;

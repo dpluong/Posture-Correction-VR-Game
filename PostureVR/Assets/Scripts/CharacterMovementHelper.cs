@@ -30,6 +30,7 @@ public class CharacterMovementHelper : MonoBehaviour
 
         CharacterController.height = height;
         CharacterController.center = center;
+        Debug.Log(XROrigin.CameraInOriginSpaceHeight);
     }
 
 

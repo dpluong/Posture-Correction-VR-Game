@@ -11,13 +11,15 @@ public class Butterfly : MonoBehaviour
     GameObject butterFly;
 
     [SerializeField]
+    GameObject followButterflyPosition;
+
+    [SerializeField]
     GameObject destination;
 
     private Vector3 butterFlyInitialPosition;
     private Vector3 butterFlyInitialRotation;
 
     public float butterFlySpeed;
-    private float butterFlyPosition = 0f;
 
     private float butterFlyStartMovingTime = 0f;
     public float butterFlyEndMovingTime = 0f;

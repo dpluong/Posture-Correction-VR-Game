@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.UI;
-using TMPro;
+using Unity.XR.CoreUtils;
 
 public class PoorPostureDetection : MonoBehaviour
 {
     // Start is called before the first frame update
+    public XROrigin XROrigin;
     public InputDeviceCharacteristics controllerCharacteristics;
     private InputDevice m_targetDevice;
 
@@ -28,7 +29,6 @@ public class PoorPostureDetection : MonoBehaviour
     private float holdTimerGrip;
 
     public bool m_isPoorPosture = false;
-    public bool isPoorPostureNotified = false;
 
     [SerializeField]
     private GameObject Screen;
@@ -49,7 +49,6 @@ public class PoorPostureDetection : MonoBehaviour
     private Vector3 dotInitialRotation;
 
     public float dotSpeed;
-    private float dotPosition = 0f;
 
     public float poorPostureTime = 0f;
     private float dotStartMovingTime = 0f;
@@ -155,38 +154,6 @@ public class PoorPostureDetection : MonoBehaviour
         uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = angle.ToString();
     }
 
-    void DotMovement()
-    {
-        //center.transform.position = Camera.main.transform.position;
-        if (m_isPoorPosture && poorPostureTime >= poorPostureTimeThreshold)
-        {
-            dot.SetActive(true);
-            dot.transform.parent = null;
-            //float dotStep = dotSpeed * Time.deltaTime;
-            //Vector3 targetPosition = new Vector3(dot.transform.position.x, 2f, dot.transform.position.z);
-            //dot.transform.position = Vector3.MoveTowards(dot.transform.position, targetPosition, dotStep);
-
-            //dot.transform.Translate(Vector3.up * dotSpeed * Time.deltaTime);
-            //dot.transform.Translate(Vector3.forward * dotSpeed * Time.deltaTime);
-            dot.transform.position = Vector3.MoveTowards(dot.transform.position, destination.transform.position, dotSpeed * Time.deltaTime);
-            dotStartMovingTime += Time.deltaTime;
-            if (dotStartMovingTime >= dotEndMovingTime)
-            {
-                dot.transform.parent = Camera.main.gameObject.transform;
-                dot.transform.localPosition = dotInitialPosition;
-                dotStartMovingTime = 0f;
-            }
-        }
-        else
-        {
-            //center.transform.rotation = Camera.main.transform.rotation;
-            dot.transform.parent = Camera.main.gameObject.transform;
-            dot.transform.localPosition = dotInitialPosition;
-            dot.transform.localEulerAngles = dotInitialRotation;
-            dot.SetActive(false);
-        }
-    }
-
     public bool IsPoorPosture()
     {
         return m_isPoorPosture;
@@ -236,7 +203,6 @@ public class PoorPostureDetection : MonoBehaviour
             }
             
         }
-        DotMovement();
 
         if (m_isPoorPosture)
         {

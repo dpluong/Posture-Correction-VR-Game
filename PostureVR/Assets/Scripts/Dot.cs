@@ -9,11 +9,13 @@ public class Dot : MonoBehaviour
     [SerializeField]
     GameObject dot;
 
+    [SerializeField]
+    GameObject followPosition;
+
     private Vector3 dotInitialPosition;
     private Vector3 dotInitialRotation;
 
     public float dotSpeed;
-    private float dotPosition = 0f;
 
     private float dotStartMovingTime = 0f;
     public float dotEndMovingTime = 0f;
@@ -37,6 +39,8 @@ public class Dot : MonoBehaviour
         {
             dot.SetActive(true);
             dot.transform.parent = null;
+            dot.transform.position = new Vector3(followPosition.transform.position.x, dot.transform.position.y, followPosition.transform.position.z);
+
 
             dot.transform.Translate(Vector3.up * dotSpeed * Time.deltaTime);
 
@@ -52,7 +56,6 @@ public class Dot : MonoBehaviour
         {
             dot.transform.parent = Camera.main.gameObject.transform;
             dot.transform.localPosition = dotInitialPosition;
-            dot.transform.localEulerAngles = dotInitialRotation;
             dot.SetActive(false);
         }
     }

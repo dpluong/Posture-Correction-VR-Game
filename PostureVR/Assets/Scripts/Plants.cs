@@ -18,6 +18,12 @@ public class Plants : MonoBehaviour
 
     public float timeToChangePosture = 3f;
 
+    public AudioSource audioSource;
+
+    public Light sunLight;
+
+    public Material skybox;
+
     float time;
 
     IEnumerator IncreaseWindStrength()

@@ -21,6 +21,7 @@ public class CompassManager : MonoBehaviour
     private void UpdateCompassArrow()
     {
         // Calculate position of the arrow based on angle
+        
 
         Vector3 targetPosition = Vector3.zero;
 

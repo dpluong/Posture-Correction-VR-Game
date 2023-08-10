@@ -25,44 +25,22 @@ public class PoorPostureDetection : MonoBehaviour
 
 
     public float holdAndReleaseTime;
-    private float holdTimerTrigger;
-    private float holdTimerGrip;
 
     public bool m_isPoorPosture = false;
 
     [SerializeField]
-    private GameObject Screen;
-
-    [SerializeField]
-    GameObject uiAngleValue;
-
-    [SerializeField]
-    GameObject dot;
-
-    [SerializeField]
-    GameObject destination;
+    GameObject angleValue;
 
     [SerializeField]
     GameObject slider;
 
-    private Vector3 dotInitialPosition;
-    private Vector3 dotInitialRotation;
-
-    public float dotSpeed;
-
     public float poorPostureTime = 0f;
-    private float dotStartMovingTime = 0f;
-    public float dotEndMovingTime = 0f;
 
     public float poorPostureTimeThreshold = 3f;
 
     void Start()
     {
-        holdTimerTrigger = holdAndReleaseTime;
-        holdTimerGrip = holdAndReleaseTime;
         TryInitialize();
-        dotInitialPosition = dot.transform.localPosition;
-        dotInitialRotation = dot.transform.localEulerAngles;
     }
 
     void TryInitialize()
@@ -74,89 +52,6 @@ public class PoorPostureDetection : MonoBehaviour
         {
             m_targetDevice = devices[0];
         }
-    }
-
-    void RecordHeight()
-    {
-        if (m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue) && triggerValue)
-        {
-            holdTimerTrigger -= Time.deltaTime;
-            if (holdTimerTrigger < 0)
-            {
-                m_height = Camera.main.transform.localPosition.y;
-                m_isHeightRecorded = true;
-            }
-            StartCoroutine(HoldButtonSlider());
-        }
-    }
-
-    void RecordMinHeight()
-    {
-        if (m_targetDevice.TryGetFeatureValue(CommonUsages.gripButton, out bool triggerValue) && triggerValue)
-        {
-            holdTimerGrip -= Time.deltaTime;
-            if (holdTimerGrip < 0)
-            {
-                m_minHeight = Camera.main.transform.localPosition.y;
-                m_isMinHeightRecorded = true;
-            }
-            StartCoroutine(HoldButtonSlider());
-        }
-        m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(Camera.main.transform.eulerAngles.x * Mathf.Deg2Rad));
-    }
-
-    float CalculateSafeHeight(float angle)
-    {
-        float angleRad = angle * Mathf.Deg2Rad;
-        float safeHeight = m_height - m_neck + m_neck * Mathf.Cos(angleRad);
-        return safeHeight;
-    }
-
-    void PostureDetection()
-    {
-        
-        float currentHeight = Camera.main.transform.localPosition.y;
-
-        if (Camera.main.transform.eulerAngles.x < upperAngleThreshold || Camera.main.transform.eulerAngles.x > lowerAngleThreshold)
-        {
-            float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
-            float safeHeight = CalculateSafeHeight(Camera.main.transform.eulerAngles.x);
-            uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = "Safe height: " + safeHeight.ToString() + " Current height: " + currentHeight.ToString()
-                                                                    + " Angle: " + angle;
-            if (safeHeight - currentHeight >= 0.013f)
-            {
-                m_isPoorPosture = true;
-            }
-            else
-            {
-                m_isPoorPosture = false;
-            }
-        }
-        else
-        {
-            m_isPoorPosture = true;
-        }
-
-        /*
-        if (m_isPoorPosture)
-        {
-            Screen.GetComponent<Renderer>().material.color = new Color(0, 0, 0);
-        }
-        else
-        {
-            Screen.GetComponent<Renderer>().material.color = new Color(1, 1, 1);
-        }*/
-    }
-
-    void DisplayTiltAngle()
-    {
-        float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
-        uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = angle.ToString();
-    }
-
-    public bool IsPoorPosture()
-    {
-        return m_isPoorPosture;
     }
 
     IEnumerator HoldButtonSlider()
@@ -174,6 +69,85 @@ public class PoorPostureDetection : MonoBehaviour
         slider.SetActive(false);
     }
 
+    void RecordHeight()
+    {
+        m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
+        if (triggerValue)
+        {
+            StartCoroutine(HoldButtonSlider());
+            m_height = Camera.main.transform.localPosition.y;
+            m_isHeightRecorded = true;
+        }
+    }
+
+    void RecordMinHeight()
+    {
+        m_targetDevice.TryGetFeatureValue(CommonUsages.gripButton, out bool gripValue);
+        if (gripValue)
+        {
+            StartCoroutine(HoldButtonSlider());
+            m_minHeight = Camera.main.transform.localPosition.y;
+            m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(Camera.main.transform.eulerAngles.x * Mathf.Deg2Rad));
+            m_isMinHeightRecorded = true;
+            angleValue.SetActive(false);
+        } 
+    }
+
+    float CalculateSafeHeight(float angle)
+    {
+        float angleRad = angle * Mathf.Deg2Rad;
+        float safeHeight = m_height - m_neck + m_neck * Mathf.Cos(angleRad);
+        return safeHeight;
+    }
+
+    void PostureDetection()
+    {
+        
+        float currentHeight = Camera.main.transform.localPosition.y;
+
+        if (Camera.main.transform.eulerAngles.x < upperAngleThreshold)
+        {
+            float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
+            float safeHeight = CalculateSafeHeight(Camera.main.transform.eulerAngles.x);
+            //uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = "Safe height: " + safeHeight.ToString() + " Current height: " + currentHeight.ToString()
+            //                                                       + " Angle: " + angle;
+            if (safeHeight - currentHeight >= 0.01f)
+            {
+                m_isPoorPosture = true;
+            }
+            else
+            {
+                m_isPoorPosture = false;
+            }
+        }
+        else
+        {
+            m_isPoorPosture = true;
+        }
+
+        if (Camera.main.transform.eulerAngles.x > lowerAngleThreshold)
+        {
+            if (m_height > currentHeight)
+            {
+                m_isPoorPosture = true;
+            }
+            else
+            {
+                m_isPoorPosture = false;
+            }
+        }
+    }
+
+    void DisplayTiltAngle()
+    {
+        float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
+        angleValue.GetComponent<TMPro.TextMeshProUGUI>().text = angle.ToString();
+    }
+
+    public bool IsPoorPosture()
+    {
+        return m_isPoorPosture;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -195,6 +169,7 @@ public class PoorPostureDetection : MonoBehaviour
             
             if (m_isHeightRecorded && m_isMinHeightRecorded)
             {
+                
                 PostureDetection();
             }
             else
@@ -211,7 +186,6 @@ public class PoorPostureDetection : MonoBehaviour
         else
         {
             poorPostureTime = 0f;
-            dotStartMovingTime = 0f;
         }
     }
 }

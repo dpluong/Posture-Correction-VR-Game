@@ -37,6 +37,7 @@ public class Dot : MonoBehaviour
         //center.transform.position = Camera.main.transform.position;
         if (poorPostureDetection.m_isPoorPosture && poorPostureDetection.poorPostureTime >= poorPostureDetection.poorPostureTimeThreshold)
         {
+            dot.GetComponent<Renderer>().material.SetColor("_Color", new Color(255, 0, 0));
             dot.SetActive(true);
             dot.transform.parent = null;
             dot.transform.position = new Vector3(followPosition.transform.position.x, dot.transform.position.y, followPosition.transform.position.z);
@@ -52,11 +53,19 @@ public class Dot : MonoBehaviour
                 dotStartMovingTime = 0f;
             }
         }
-        else
+        if (!poorPostureDetection.m_isPoorPosture)
         {
-            dot.transform.parent = Camera.main.gameObject.transform;
-            dot.transform.localPosition = dotInitialPosition;
-            dot.SetActive(false);
+            dot.GetComponent<Renderer>().material.SetColor("_Color", new Color(0, 255, 0));
+            StartCoroutine(WaitBeforeDisableDot());            
         }
     }
+
+    IEnumerator WaitBeforeDisableDot()
+    {
+        yield return new WaitForSeconds(1f);
+        dot.SetActive(false);
+        dot.transform.parent = Camera.main.gameObject.transform;
+        dot.transform.localPosition = dotInitialPosition;
+    }
+
 }

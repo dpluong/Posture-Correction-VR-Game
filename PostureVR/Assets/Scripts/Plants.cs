@@ -14,10 +14,6 @@ public class Plants : MonoBehaviour
 
     private bool isWindStrengthIncreased = false;
 
-    //private bool isInCoroutine = false;
-
-    public float timeToChangePosture = 3f;
-
     public AudioSource audioSource;
 
     public Light sunLight;
@@ -29,7 +25,7 @@ public class Plants : MonoBehaviour
     IEnumerator IncreaseWindStrength()
     {
         //isInCoroutine = true;
-        yield return new WaitForSeconds(timeToChangePosture);
+        //yield return new WaitForSeconds(timeToChangePosture);
         while (time < duration)
         {
             for (int matIndex = 0; matIndex < materials.Count; ++matIndex)
@@ -37,8 +33,11 @@ public class Plants : MonoBehaviour
                 float windStrength = Mathf.Lerp(startWindStrength[matIndex], 1f, time / duration);
                 materials[matIndex].SetFloat("_WindStrength", windStrength);
             }
+
+            sunLight.intensity = Mathf.Lerp(sunLight.intensity, 1f, time / duration);
             time += Time.deltaTime * 0.5f;
-            yield return new WaitForSeconds(1f);
+            //yield return new WaitForSeconds(1f);
+            yield return null;
         }
 
         if (time >= duration)
@@ -52,7 +51,7 @@ public class Plants : MonoBehaviour
         isWindStrengthIncreased = true;
     }
 
-    void DecreaseWindStrength()
+    IEnumerator DecreaseWindStrength()
     {
         time = 0f;
         while (time < duration)
@@ -62,9 +61,14 @@ public class Plants : MonoBehaviour
                 float windStrength = Mathf.Lerp(1f, startWindStrength[matIndex], time / duration);
                 materials[matIndex].SetFloat("_WindStrength", windStrength);
             }
+            Debug.Log(sunLight.intensity);
+            sunLight.intensity = Mathf.Lerp(sunLight.intensity, 2f, time / duration);
             time += Time.deltaTime * 0.5f;
-            //yield return new WaitForSeconds(1f);
+
+            yield return null;
         }
+        ResetWindStrength();
+        isWindStrengthIncreased = false;
     }
 
     void ResetWindStrength()
@@ -93,17 +97,15 @@ public class Plants : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (postureDetectionMethod.m_isPoorPosture)
+        if (postureDetectionMethod.m_isPoorPosture && postureDetectionMethod.poorPostureTime >= postureDetectionMethod.poorPostureTimeThreshold)
         {
             StartCoroutine(IncreaseWindStrength());
         }
-        else
+        if (!postureDetectionMethod.m_isPoorPosture)
         {
             if (isWindStrengthIncreased)
             {
-                DecreaseWindStrength();
-                ResetWindStrength();
-                isWindStrengthIncreased = false;
+                StartCoroutine(DecreaseWindStrength());
             }
         }
     }

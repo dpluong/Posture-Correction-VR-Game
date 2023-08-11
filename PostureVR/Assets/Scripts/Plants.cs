@@ -24,51 +24,57 @@ public class Plants : MonoBehaviour
 
     IEnumerator IncreaseWindStrength()
     {
-        //isInCoroutine = true;
-        //yield return new WaitForSeconds(timeToChangePosture);
-        while (time < duration)
+    
+        while (time < duration && !isWindStrengthIncreased)
         {
             for (int matIndex = 0; matIndex < materials.Count; ++matIndex)
             {
                 float windStrength = Mathf.Lerp(startWindStrength[matIndex], 1f, time / duration);
                 materials[matIndex].SetFloat("_WindStrength", windStrength);
             }
-
-            sunLight.intensity = Mathf.Lerp(sunLight.intensity, 1f, time / duration);
+            
+            sunLight.intensity = Mathf.Lerp(2f, 1f, time / duration);
+            audioSource.volume = Mathf.Lerp(0f, 1f, time / duration);
+            skybox.SetFloat("_Exposure", Mathf.Lerp(1f, 0.5f, time / duration));
             time += Time.deltaTime * 0.5f;
-            //yield return new WaitForSeconds(1f);
             yield return null;
         }
-
+        
         if (time >= duration)
         {
             for (int matIndex = 0; matIndex < materials.Count; ++matIndex)
             {
                 materials[matIndex].SetFloat("_WindStrength", 1f);
             }
+            isWindStrengthIncreased = true;
+            time = 0f;
         }
-
-        isWindStrengthIncreased = true;
     }
 
     IEnumerator DecreaseWindStrength()
     {
-        time = 0f;
-        while (time < duration)
+
+        while (time < duration && isWindStrengthIncreased)
         {
             for (int matIndex = 0; matIndex < materials.Count; ++matIndex)
             {
                 float windStrength = Mathf.Lerp(1f, startWindStrength[matIndex], time / duration);
                 materials[matIndex].SetFloat("_WindStrength", windStrength);
             }
-            Debug.Log(sunLight.intensity);
-            sunLight.intensity = Mathf.Lerp(sunLight.intensity, 2f, time / duration);
+            sunLight.intensity = Mathf.Lerp(1f, 2f, time / duration);
+            audioSource.volume = Mathf.Lerp(1f, 0f, time / duration);
+            skybox.SetFloat("_Exposure", Mathf.Lerp(0.5f, 1f, time / duration));
             time += Time.deltaTime * 0.5f;
 
             yield return null;
         }
-        ResetWindStrength();
-        isWindStrengthIncreased = false;
+
+        if (time >= duration)
+        {
+            ResetWindStrength();
+            isWindStrengthIncreased = false;
+            time = 0f;
+        }
     }
 
     void ResetWindStrength()
@@ -94,7 +100,7 @@ public class Plants : MonoBehaviour
         time = 0f;
         InitWindStrengthValues();
     }
-    // Update is called once per frame
+
     void Update()
     {
         if (postureDetectionMethod.m_isPoorPosture && postureDetectionMethod.poorPostureTime >= postureDetectionMethod.poorPostureTimeThreshold)
@@ -103,10 +109,7 @@ public class Plants : MonoBehaviour
         }
         if (!postureDetectionMethod.m_isPoorPosture)
         {
-            if (isWindStrengthIncreased)
-            {
-                StartCoroutine(DecreaseWindStrength());
-            }
+            StartCoroutine(DecreaseWindStrength());
         }
     }
 }

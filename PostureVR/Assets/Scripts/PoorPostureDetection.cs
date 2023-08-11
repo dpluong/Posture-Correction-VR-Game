@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.UI;
-using Unity.XR.CoreUtils;
+
 
 public class PoorPostureDetection : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public XROrigin XROrigin;
     public InputDeviceCharacteristics controllerCharacteristics;
     private InputDevice m_targetDevice;
 
@@ -162,7 +160,7 @@ public class PoorPostureDetection : MonoBehaviour
                 RecordHeight();
             }
 
-            if (!m_isMinHeightRecorded )
+            if (m_isHeightRecorded && !m_isMinHeightRecorded )
             {
                 RecordMinHeight();
             }

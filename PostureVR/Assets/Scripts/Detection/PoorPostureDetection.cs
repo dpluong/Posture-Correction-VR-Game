@@ -141,11 +141,7 @@ public class PoorPostureDetection : MonoBehaviour
         float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
         angleValue.GetComponent<TMPro.TextMeshProUGUI>().text = angle.ToString();
     }
-
-    public bool IsPoorPosture()
-    {
-        return m_isPoorPosture;
-    }
+    
     // Update is called once per frame
     void Update()
     {

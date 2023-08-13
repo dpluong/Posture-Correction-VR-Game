@@ -52,5 +52,8 @@ public class FollowCamera : MonoBehaviour
         Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
         transform.rotation = Quaternion.LookRotation(newDirection);
+
+        //Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+        //transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, singleStep);
     }
 }

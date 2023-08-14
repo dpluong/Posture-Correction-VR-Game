@@ -11,7 +11,7 @@ public class FollowCamera : MonoBehaviour
 
     bool IsCentered()
     {
-        if (Vector3.Angle(cameraTransform.forward, transform.position - cameraTransform.position) > 5f)
+        if (Vector3.Angle(cameraTransform.forward, transform.position - cameraTransform.position) > 0.1f)
             return false;
         
         return true;
@@ -23,7 +23,10 @@ public class FollowCamera : MonoBehaviour
         {
             Vector3 targetPosition = FindTargetPosition();
 
-            MoveTowards(targetPosition);
+            //float step = 3f * Time.deltaTime; // calculate distance to move
+            //transform.position = Vector3.MoveTowards(transform.position, targetPosition, step);
+            //MoveTowards(targetPosition);
+            transform.position = targetPosition;
         }
         FaceTowardCamera();
     }
@@ -52,8 +55,5 @@ public class FollowCamera : MonoBehaviour
         Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
 
         transform.rotation = Quaternion.LookRotation(newDirection);
-
-        //Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
-        //transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, singleStep);
     }
 }

@@ -26,6 +26,8 @@ public class PoorPostureDetection : MonoBehaviour
 
     public bool m_isPoorPosture = false;
 
+    public bool interventionTriggered = false;
+
     [SerializeField]
     GameObject angleValue;
 
@@ -181,5 +183,7 @@ public class PoorPostureDetection : MonoBehaviour
         {
             poorPostureTime = 0f;
         }
+
+
     }
 }

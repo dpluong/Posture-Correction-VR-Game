@@ -524,17 +524,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 237190207}
-  m_LocalRotation: {x: -0, y: -0.72665536, z: -0, w: 0.6870022}
-  m_LocalPosition: {x: 0, y: 0, z: -2.92}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: -2.55}
   m_LocalScale: {x: 0.0067668883, y: 0.0067668874, z: 0.0067668883}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1305039118}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: -93.213, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.6200001, y: -1.99}
+  m_AnchoredPosition: {x: -0.6200001, y: -1.909}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &244286632
@@ -4752,8 +4752,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poorPostureDetection: {fileID: 578395397}
-  playerName: Peter
+  playerName: A
   timesPerSecond: 10
+  interventionType: 1
   player: []
   startCollectingData: 0
   endCollectingData: 0

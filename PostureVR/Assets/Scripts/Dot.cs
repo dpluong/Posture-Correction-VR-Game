@@ -37,11 +37,13 @@ public class Dot : MonoBehaviour
         //center.transform.position = Camera.main.transform.position;
         if (poorPostureDetection.m_isPoorPosture && poorPostureDetection.poorPostureTime >= poorPostureDetection.poorPostureTimeThreshold)
         {
-            dot.GetComponent<Renderer>().material.SetColor("_Color", new Color(255, 0, 0));
-            dot.SetActive(true);
-            dot.transform.parent = null;
-            dot.transform.position = new Vector3(followPosition.transform.position.x, dot.transform.position.y, followPosition.transform.position.z);
-
+            if (dot.activeSelf == false)
+            {
+                dot.transform.parent = null;
+                dot.GetComponent<Renderer>().material.SetColor("_Color", new Color(255, 0, 0));
+                dot.transform.position = new Vector3(followPosition.transform.position.x, dot.transform.position.y, followPosition.transform.position.z);
+                dot.SetActive(true);
+            }
 
             dot.transform.Translate(Vector3.up * dotSpeed * Time.deltaTime);
 

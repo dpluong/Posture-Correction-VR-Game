@@ -6,25 +6,12 @@ public class Dot : MonoBehaviour
 {
     public PoorPostureDetection poorPostureDetection;
 
-    [SerializeField]
-    GameObject dot;
-
-    [SerializeField]
-    GameObject followPosition;
-
-    private Vector3 dotInitialPosition;
-    private Vector3 dotInitialRotation;
+    [SerializeField] private float distance = 3.0f;
 
     public float dotSpeed;
 
     private float dotStartMovingTime = 0f;
     public float dotEndMovingTime = 0f;
-
-    void Start()
-    {
-        dotInitialPosition = dot.transform.localPosition;
-        dotInitialRotation = dot.transform.localEulerAngles;
-    }
 
 
     void Update()
@@ -34,40 +21,43 @@ public class Dot : MonoBehaviour
 
     void DotMovement()
     {
-        //center.transform.position = Camera.main.transform.position;
         if (poorPostureDetection.m_isPoorPosture && poorPostureDetection.poorPostureTime >= poorPostureDetection.poorPostureTimeThreshold)
         {
-            if (dot.activeSelf == false)
+            if (gameObject.GetComponent<MeshRenderer>().enabled == false)
             {
-                dot.transform.parent = null;
-                dot.GetComponent<Renderer>().material.SetColor("_Color", new Color(255, 0, 0));
-                dot.transform.position = new Vector3(followPosition.transform.position.x, dot.transform.position.y, followPosition.transform.position.z);
-                dot.SetActive(true);
+                //dot.transform.parent = null;
+                gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(255, 0, 0));
+                gameObject.GetComponent<MeshRenderer>().enabled = true;
             }
 
-            dot.transform.Translate(Vector3.up * dotSpeed * Time.deltaTime);
-
+            //gameObject.transform.Translate(Vector3.up * dotSpeed * Time.deltaTime);
             dotStartMovingTime += Time.deltaTime;
+            gameObject.transform.position = FindTargetPosition() + Vector3.up * dotSpeed * dotStartMovingTime;
+            
+            
             if (dotStartMovingTime >= dotEndMovingTime)
             {
-                dot.transform.parent = Camera.main.gameObject.transform;
-                dot.transform.localPosition = dotInitialPosition;
+                gameObject.transform.position = FindTargetPosition();
                 dotStartMovingTime = 0f;
             }
         }
         if (!poorPostureDetection.m_isPoorPosture)
         {
-            dot.GetComponent<Renderer>().material.SetColor("_Color", new Color(0, 255, 0));
+            gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(0, 255, 0));
+            gameObject.transform.position = FindTargetPosition();
             StartCoroutine(WaitBeforeDisableDot());            
         }
+    }
+
+    private Vector3 FindTargetPosition()
+    {
+        return Camera.main.transform.position + (Camera.main.transform.forward * distance);
     }
 
     IEnumerator WaitBeforeDisableDot()
     {
         yield return new WaitForSeconds(1f);
-        dot.SetActive(false);
-        dot.transform.parent = Camera.main.gameObject.transform;
-        dot.transform.localPosition = dotInitialPosition;
+        gameObject.GetComponent<MeshRenderer>().enabled = false;
     }
 
 }

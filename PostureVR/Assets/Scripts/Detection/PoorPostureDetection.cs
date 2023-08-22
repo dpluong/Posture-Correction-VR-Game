@@ -109,8 +109,7 @@ public class PoorPostureDetection : MonoBehaviour
         {
             float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
             float safeHeight = CalculateSafeHeight(Camera.main.transform.eulerAngles.x);
-            //uiAngleValue.GetComponent<TMPro.TextMeshProUGUI>().text = "Safe height: " + safeHeight.ToString() + " Current height: " + currentHeight.ToString()
-            //                                                       + " Angle: " + angle;
+        
             if (safeHeight - currentHeight >= 0.01f)
             {
                 m_isPoorPosture = true;

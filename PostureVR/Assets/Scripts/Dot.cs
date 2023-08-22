@@ -13,10 +13,28 @@ public class Dot : MonoBehaviour
     private float dotStartMovingTime = 0f;
     public float dotEndMovingTime = 0f;
 
+    public float targetScale;
+    public float timeToLerp = 0.25f;
+    //float scaleModifier = 1;
+
+    public Transform crosshair;
+
+    bool isFocusing = true;
+    float degreesPerSecond = 30;
+
+
+    float time = 0f;
+    Vector3 startScale;
+
+    void Start()
+    {
+        startScale = crosshair.localScale;
+    }
 
     void Update()
     {
-        DotMovement();
+       DotMovement();
+       transform.LookAt(Camera.main.transform);
     }
 
     void DotMovement()
@@ -25,12 +43,13 @@ public class Dot : MonoBehaviour
         {
             if (gameObject.GetComponent<MeshRenderer>().enabled == false)
             {
-                //dot.transform.parent = null;
                 gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(255, 0, 0));
                 gameObject.GetComponent<MeshRenderer>().enabled = true;
+                crosshair.GetComponent<SpriteRenderer>().enabled = true;
+                crosshair.localScale = Vector3.one;
             }
-
-            //gameObject.transform.Translate(Vector3.up * dotSpeed * Time.deltaTime);
+            FocusOnDot();
+            CircleAround();
             dotStartMovingTime += Time.deltaTime;
             gameObject.transform.position = FindTargetPosition() + Vector3.up * dotSpeed * dotStartMovingTime;
             
@@ -45,6 +64,7 @@ public class Dot : MonoBehaviour
         {
             gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(0, 255, 0));
             gameObject.transform.position = FindTargetPosition();
+            //crosshair.localScale = 
             StartCoroutine(WaitBeforeDisableDot());            
         }
     }
@@ -54,10 +74,63 @@ public class Dot : MonoBehaviour
         return Camera.main.transform.position + (Camera.main.transform.forward * distance);
     }
 
+    void CircleAround()
+    {
+        crosshair.Rotate(new Vector3(0, 0, degreesPerSecond) * Time.deltaTime);
+    }
+
+    IEnumerator LerpScale(float endValue, float duration)
+    {
+        while (time < duration && isFocusing)
+        {
+            crosshair.localScale = startScale * Mathf.Lerp(1f, endValue, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+        
+        if (time >= duration)
+        {
+            crosshair.localScale = startScale * endValue;
+            time = 0f;
+            startScale = crosshair.localScale;
+            isFocusing = false;
+        }
+    }
+
+    IEnumerator LerpScale2(float endValue, float duration)
+    {
+        while (time < duration && !isFocusing)
+        {
+            crosshair.localScale = startScale * Mathf.Lerp(1f, endValue, time / duration);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        if (time >= duration)
+        {
+            crosshair.localScale = startScale * endValue;
+            time = 0f;
+            startScale = crosshair.localScale;
+            isFocusing = true;
+        }
+    }
+
+    private void FocusOnDot()
+    {
+        if (isFocusing)
+        {
+            StartCoroutine(LerpScale(targetScale, timeToLerp));
+        }
+        else
+        {
+            StartCoroutine(LerpScale2(2f, timeToLerp));
+        }
+    }
+
     IEnumerator WaitBeforeDisableDot()
     {
         yield return new WaitForSeconds(1f);
         gameObject.GetComponent<MeshRenderer>().enabled = false;
+        crosshair.GetComponent<SpriteRenderer>().enabled = false;
     }
-
 }

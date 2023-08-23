@@ -20,6 +20,11 @@ public class Plants : MonoBehaviour
 
     public Material skybox;
 
+    [Header("Weather Switch Settings")]
+    public Transform pivotPoint;
+    public float degreesPerSecond;
+    public GameObject WeatherSwitch;
+
     float time;
 
     IEnumerator IncreaseWindStrength()
@@ -94,6 +99,33 @@ public class Plants : MonoBehaviour
         }
     }
 
+    IEnumerator WaitForWeatherSwitchToDisappear()
+    {
+        yield return new WaitForSeconds(1f);
+        WeatherSwitch.SetActive(false);
+    }
+
+    void SwitchWeather()
+    {
+        if(!postureDetectionMethod.m_isPoorPosture)
+        {
+            if (pivotPoint.eulerAngles.z - 360f <= -90f)
+            {
+                StartCoroutine(WaitForWeatherSwitchToDisappear());
+                return;
+            }
+            pivotPoint.Rotate(-Vector3.forward, degreesPerSecond * Time.deltaTime);
+        }
+        else if (postureDetectionMethod.m_isPoorPosture && postureDetectionMethod.poorPostureTime >= postureDetectionMethod.poorPostureTimeThreshold)
+        {
+            if (pivotPoint.eulerAngles.z - 360f >= -30f)
+            { 
+                return;
+            }
+            pivotPoint.Rotate(Vector3.forward, degreesPerSecond * Time.deltaTime);
+        }
+    }
+
     void Start()
     {
         startWindStrength = new float[materials.Count];
@@ -105,11 +137,13 @@ public class Plants : MonoBehaviour
     {
         if (postureDetectionMethod.m_isPoorPosture && postureDetectionMethod.poorPostureTime >= postureDetectionMethod.poorPostureTimeThreshold)
         {
+            WeatherSwitch.SetActive(true);
             StartCoroutine(IncreaseWindStrength());
         }
         if (!postureDetectionMethod.m_isPoorPosture)
         {
             StartCoroutine(DecreaseWindStrength());
         }
+        SwitchWeather();
     }
 }

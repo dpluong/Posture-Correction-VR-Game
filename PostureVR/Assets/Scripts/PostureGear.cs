@@ -17,6 +17,11 @@ public class PostureGear : MonoBehaviour
     private float greenValue;
     private float blueValue;
 
+    private GameObject gaugeG;
+    private GameObject gaugeY;
+    private GameObject gaugeO;
+    private GameObject gaugeR;
+
     private bool isPostureCorrected = false;
 
     void Start() 
@@ -24,6 +29,11 @@ public class PostureGear : MonoBehaviour
         redValue = goodPostureIcon.color.r;
         greenValue = goodPostureIcon.color.g;
         blueValue = goodPostureIcon.color.b;
+
+        gaugeG = goodPostureIcon.gameObject.transform.GetChild(0).gameObject;
+        gaugeY = badPostureIcon15.gameObject.transform.GetChild(0).gameObject;
+        gaugeO = badPostureIcon30.gameObject.transform.GetChild(0).gameObject;
+        gaugeR = badPostureIcon60.gameObject.transform.GetChild(0).gameObject;
     }
 
     void DisplayPostureIcon()
@@ -94,6 +104,11 @@ public class PostureGear : MonoBehaviour
         badPostureIcon15.enabled = true;
         badPostureIcon30.enabled = true;
         badPostureIcon60.enabled = true;
+
+        gaugeG.SetActive(true);
+        gaugeY.SetActive(true);
+        gaugeO.SetActive(true);
+        gaugeR.SetActive(true);
     }
 
     void HideIconSprite()
@@ -102,6 +117,11 @@ public class PostureGear : MonoBehaviour
         badPostureIcon15.enabled = false;
         badPostureIcon30.enabled = false;
         badPostureIcon60.enabled = false;
+
+        gaugeG.SetActive(false);
+        gaugeY.SetActive(false);
+        gaugeO.SetActive(false);
+        gaugeR.SetActive(false);
     }
 
     void Update()

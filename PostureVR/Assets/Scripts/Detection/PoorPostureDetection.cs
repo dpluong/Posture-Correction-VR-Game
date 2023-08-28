@@ -8,6 +8,8 @@ using UnityEngine.UI;
 public class PoorPostureDetection : MonoBehaviour
 {
     public InputDeviceCharacteristics controllerCharacteristics;
+    public DataCollection dataCollection;
+
     private InputDevice m_targetDevice;
 
     private float m_height;
@@ -144,7 +146,7 @@ public class PoorPostureDetection : MonoBehaviour
     }
     
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (!m_targetDevice.isValid)
         {
@@ -160,11 +162,11 @@ public class PoorPostureDetection : MonoBehaviour
             if (m_isHeightRecorded && !m_isMinHeightRecorded )
             {
                 RecordMinHeight();
+                dataCollection.startCollectingData = true;
             }
             
             if (m_isHeightRecorded && m_isMinHeightRecorded)
             {
-                
                 PostureDetection();
             }
             else
@@ -176,7 +178,7 @@ public class PoorPostureDetection : MonoBehaviour
 
         if (m_isPoorPosture)
         {
-            poorPostureTime += Time.deltaTime;
+            poorPostureTime += Time.fixedDeltaTime;
         }
         else
         {

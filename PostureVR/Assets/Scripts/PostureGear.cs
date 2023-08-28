@@ -70,6 +70,7 @@ public class PostureGear : MonoBehaviour
         {
             ResetIconAlphaValue(false,true,true,true);
             goodPostureIcon.color = new Color(redValue, greenValue, blueValue, 1f);
+            poorPostureDetection.interventionTriggered = false;
             if (isPostureCorrected)
                 StartCoroutine(ResetIconAfterGoodPosture());
         }
@@ -77,10 +78,9 @@ public class PostureGear : MonoBehaviour
 
     IEnumerator ResetIconAfterGoodPosture()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         HideIconSprite();
         isPostureCorrected = false;
-        poorPostureDetection.interventionTriggered = false;
     }
 
     void ResetIconAlphaValue(bool flag0, bool flag15, bool flag30, bool flag60)

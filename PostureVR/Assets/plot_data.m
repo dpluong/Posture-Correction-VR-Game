@@ -1,6 +1,9 @@
-data_matrix = readcell("Tian.csv");
+data_matrix = readcell("Test.csv");
 data_matrix = data_matrix(2:length(data_matrix),:);
 %split matrix to different interventions
+
+
+%{
 extract_base = data_matrix(:,5) == "Base";
 Base = data_matrix(extract_base,:);
 Base = cell2mat(Base(:,1:4));
@@ -25,6 +28,7 @@ for i=1:4
         ylabel('Intervention Triggered')
     end
 end
+%}
 
 extract_icon = data_matrix(:,5) == "Icon";
 Icon = data_matrix(extract_icon,:);
@@ -51,6 +55,7 @@ for i=1:4
     end
 end
 
+%{
 extract_dot = data_matrix(:,5) == "Dot";
 Dot = data_matrix(extract_dot,:);
 Dot = cell2mat(Dot(:,1:4));
@@ -100,8 +105,4 @@ for i=1:4
         ylabel('Intervention Triggered')
     end
 end
-
-
-
-
-
+%}

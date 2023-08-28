@@ -36,13 +36,14 @@ public class DataCollection : MonoBehaviour
 
     [SerializeField]
     public List<Player> player;
+    public bool startCollectingData = false;
+    public bool endCollectingData = false;
+    public float timeToCollectData = 300f;
 
     private float timer = 0f;
+    private float totalTimer = 0f;
 
-    public bool startCollectingData = false;
 
-    public bool endCollectingData = false;
-    
     void Start()
     {
         filename = Application.dataPath + "/" + playerName + ".csv";
@@ -53,6 +54,7 @@ public class DataCollection : MonoBehaviour
         if (startCollectingData)
         {
             timer += Time.fixedDeltaTime;
+            totalTimer += Time.fixedDeltaTime;
             if (timer >= 1f / timesPerSecond)
             {
                 timer = 0f;
@@ -63,10 +65,16 @@ public class DataCollection : MonoBehaviour
                 {
                     playerData.angle = playerData.angle - 360f;
                 }
-                playerData.postureState = poorPostureDetection.m_isPoorPosture ? 1 : 0;
+                
+                playerData.postureState = (poorPostureDetection.m_isPoorPosture && poorPostureDetection.poorPostureTime >= poorPostureDetection.poorPostureTimeThreshold) ? 1 : 0;
                 playerData.interventionTriggered = poorPostureDetection.interventionTriggered ? 1 : 0;
                 playerData.intervention = interventionType;
                 player.Add(playerData);
+            }
+            if (totalTimer >= timeToCollectData)
+            {
+                startCollectingData = false;
+                endCollectingData = true;
             }
         }
     }

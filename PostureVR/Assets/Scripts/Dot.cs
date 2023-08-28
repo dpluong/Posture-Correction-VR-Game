@@ -59,12 +59,15 @@ public class Dot : MonoBehaviour
                 gameObject.transform.position = FindTargetPosition();
                 dotStartMovingTime = 0f;
             }
+            poorPostureDetection.interventionTriggered = true;
         }
         if (!poorPostureDetection.m_isPoorPosture)
         {
             gameObject.GetComponent<Renderer>().material.SetColor("_Color", new Color(0, 255, 0));
-            gameObject.transform.position = FindTargetPosition();
-            //crosshair.localScale = 
+            crosshair.localScale = new Vector3(targetScale, targetScale, 0f);
+            poorPostureDetection.interventionTriggered = false;
+            //gameObject.transform.SetParent(Camera.main.transform);
+            //gameObject.transform.position = FindTargetPosition();
             StartCoroutine(WaitBeforeDisableDot());            
         }
     }
@@ -132,5 +135,6 @@ public class Dot : MonoBehaviour
         yield return new WaitForSeconds(1f);
         gameObject.GetComponent<MeshRenderer>().enabled = false;
         crosshair.GetComponent<SpriteRenderer>().enabled = false;
+        //gameObject.transform.parent = null;
     }
 }

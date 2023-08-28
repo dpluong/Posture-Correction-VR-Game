@@ -27,6 +27,14 @@ public class Plants : MonoBehaviour
 
     float time;
 
+    [Header("Bending Tree Settings")]
+    public Transform XROrigin;
+    public float spawnRadius;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private GameObject coconut;
+    private GameObject postureTree = null;
+
+
     IEnumerator IncreaseWindStrength()
     {
     
@@ -111,6 +119,7 @@ public class Plants : MonoBehaviour
         {
             if (pivotPoint.eulerAngles.z - 360f <= -90f)
             {
+                pivotPoint.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(0f, 255f, 0f);
                 StartCoroutine(WaitForWeatherSwitchToDisappear());
                 return;
             }
@@ -118,6 +127,7 @@ public class Plants : MonoBehaviour
         }
         else if (postureDetectionMethod.m_isPoorPosture && postureDetectionMethod.poorPostureTime >= postureDetectionMethod.poorPostureTimeThreshold)
         {
+            pivotPoint.GetChild(0).GetComponent<SpriteRenderer>().color = new Color(255f, 0f, 0f);
             if (pivotPoint.eulerAngles.z - 360f >= -30f)
             { 
                 return;
@@ -131,18 +141,51 @@ public class Plants : MonoBehaviour
         startWindStrength = new float[materials.Count];
         time = 0f;
         InitWindStrengthValues();
+        //SpawnPosturePlant();
+    }
+
+
+
+    void SpawnPosturePlant()
+    {
+        // Find position to spawn
+        if (postureTree == null)
+        {
+            Vector3 positionToShootRay = XROrigin.position + new Vector3(0f, 2f, 0f) + XROrigin.forward * spawnRadius;
+            RaycastHit hit;
+            if (Physics.Raycast(positionToShootRay, Vector3.down, out hit, Mathf.Infinity, groundLayer))
+            {
+                //Debug.DrawRay(positionToShootRay, Vector3.down * hit.distance, Color.yellow);
+                //Debug.Log("Did Hit");
+                postureTree = Instantiate(coconut, hit.point, Quaternion.identity);
+            }
+
+            if (postureTree != null)
+            {
+                postureTree.GetComponent<Animator>().SetBool("IsPoorPosture", true);
+                postureTree.GetComponent<Animator>().SetBool("ReturnNormal", false);
+            }
+        }
     }
 
     void Update()
     {
         if (postureDetectionMethod.m_isPoorPosture && postureDetectionMethod.poorPostureTime >= postureDetectionMethod.poorPostureTimeThreshold)
         {
-            WeatherSwitch.SetActive(true);
-            StartCoroutine(IncreaseWindStrength());
+            postureDetectionMethod.interventionTriggered = true;
+            //WeatherSwitch.SetActive(true);
+            //StartCoroutine(IncreaseWindStrength());
+            SpawnPosturePlant();
         }
         if (!postureDetectionMethod.m_isPoorPosture)
         {
-            StartCoroutine(DecreaseWindStrength());
+            postureDetectionMethod.interventionTriggered = false;
+            //StartCoroutine(DecreaseWindStrength());
+            if (postureTree != null)
+            {
+                postureTree.GetComponent<Animator>().SetBool("IsPoorPosture", false);
+                postureTree.GetComponent<Animator>().SetBool("ReturnNormal", true);
+            }
         }
         SwitchWeather();
     }

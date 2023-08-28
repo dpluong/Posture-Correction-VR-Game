@@ -6,8 +6,12 @@ using UnityEngine.XR;
 public class DrawingController : MonoBehaviour
 {
     public InputDeviceCharacteristics controllerCharacteristics;
+    public Transform photoAttachedPoint;
+
     private InputDevice m_targetDevice;
-    // Start is called before the first frame update
+
+    
+    
     void Start()
     {
         TryInitialize();
@@ -26,19 +30,18 @@ public class DrawingController : MonoBehaviour
 
     void ShowDrawing()
     {
-        m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool gripValue);
+        m_targetDevice.TryGetFeatureValue(CommonUsages.gripButton, out bool gripValue);
         if(gripValue)
         {
-            
-            gameObject.GetComponent<SpriteRenderer>().enabled = true;
+            HoldPhoto();
         }
         else
         {
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            transform.position = photoAttachedPoint.position;
+            ReleasePhoto();
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (!m_targetDevice.isValid)
@@ -47,5 +50,16 @@ public class DrawingController : MonoBehaviour
         }
         else
             ShowDrawing();
+    }
+    
+    public void HoldPhoto()
+    {
+        //transform.position = photoAttachedPoint.position;
+        gameObject.GetComponent<SpriteRenderer>().enabled = true;
+    }
+
+    public void ReleasePhoto()
+    {
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
     }
 }

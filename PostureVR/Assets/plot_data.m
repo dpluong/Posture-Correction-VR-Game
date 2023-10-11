@@ -38,7 +38,7 @@ X = 1:length(Icon);
 for i=1:4
     Y = Icon(:,i);
     figure
-    plot(X,Y);
+    plot(X,Y,'r','LineWidth',1.5);
     title('Icon')
     if i == 1
         xlabel('Seconds')

@@ -15,6 +15,7 @@ public class PoorPostureDetection : MonoBehaviour
     private float m_height;
     private float m_minHeight;
     private float m_neck;
+    private Quaternion m_centerEyeRotation;
 
     private bool m_isHeightRecorded = false;
     private bool m_isMinHeightRecorded = false;
@@ -91,7 +92,7 @@ public class PoorPostureDetection : MonoBehaviour
         {
             StartCoroutine(HoldButtonSlider());
             m_minHeight = Camera.main.transform.localPosition.y;
-            m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(Camera.main.transform.eulerAngles.x * Mathf.Deg2Rad));
+            m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
             m_isMinHeightRecorded = true;
             angleValue.SetActive(false);
         } 
@@ -109,10 +110,10 @@ public class PoorPostureDetection : MonoBehaviour
         
         float currentHeight = Camera.main.transform.localPosition.y;
 
-        if (Camera.main.transform.eulerAngles.x < upperAngleThreshold)
+        if (m_centerEyeRotation.eulerAngles.x < upperAngleThreshold)
         {
-            float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
-            float safeHeight = CalculateSafeHeight(Camera.main.transform.eulerAngles.x);
+            float angle = Mathf.Round(m_centerEyeRotation.eulerAngles.x);
+            float safeHeight = CalculateSafeHeight(m_centerEyeRotation.eulerAngles.x);
         
             if (safeHeight - currentHeight >= 0.01f)
             {
@@ -128,7 +129,7 @@ public class PoorPostureDetection : MonoBehaviour
             m_isPoorPosture = true;
         }
 
-        if (Camera.main.transform.eulerAngles.x > lowerAngleThreshold)
+        if (m_centerEyeRotation.eulerAngles.x > lowerAngleThreshold)
         {
             if (m_height > currentHeight)
             {
@@ -143,13 +144,33 @@ public class PoorPostureDetection : MonoBehaviour
 
     void DisplayTiltAngle()
     {
-        float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
+        float angle = Mathf.Round(m_centerEyeRotation.eulerAngles.x);
         angleValue.GetComponent<TMPro.TextMeshProUGUI>().text = angle.ToString();
+    }
+
+    bool TryGetCenterEyeRotation()
+    {
+        InputDevice device = InputDevices.GetDeviceAtXRNode(XRNode.CenterEye);
+        if (device.isValid)
+        {
+            if (device.TryGetFeatureValue(CommonUsages.centerEyeRotation, out m_centerEyeRotation))
+            {
+                return true;
+            }
+        }
+        
+        m_centerEyeRotation = Quaternion.identity;
+        return false;
     }
     
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!TryGetCenterEyeRotation())
+        {
+            //Debug.Log("Device is not valid or not active");
+        }
+
         if (!m_targetDevice.isValid)
         {
             TryInitialize();

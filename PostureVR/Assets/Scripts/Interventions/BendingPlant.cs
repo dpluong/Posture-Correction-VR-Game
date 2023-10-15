@@ -9,6 +9,7 @@ public class BendingPlant : MonoBehaviour
     public GameObject BendingPlants;
     public Material disintegrationMat;
     public float disintegrationDuration = 3f;
+
     private float disintegrationTime = 0f;
     private bool wasPoorPosture = false;
     
@@ -82,6 +83,17 @@ public class BendingPlant : MonoBehaviour
         {
             Bend();
             //StartCoroutine(DecreaseDisintegrationState());
+            /*
+            for (int i = 0; i < BendingPlants.transform.childCount; ++i)
+            {
+                Animator currentAnimator = BendingPlants.transform.GetChild(i).gameObject.GetComponent<Animator>();
+                Debug.Log(currentAnimator.GetCurrentAnimatorStateInfo(0).IsName("Empty State"));
+               
+                if (currentAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f)
+                {
+                    currentAnimator.speed = 0;
+                }
+            }*/
         }
         else
         {
@@ -90,6 +102,8 @@ public class BendingPlant : MonoBehaviour
                 StraughtenUp();
                 //StartCoroutine(WaitForPlantsToStraightenUp());
             //}
-        } 
+        }
+
+        
     }
 }

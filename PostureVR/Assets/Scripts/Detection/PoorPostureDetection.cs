@@ -29,7 +29,7 @@ public class PoorPostureDetection : MonoBehaviour
     public bool m_isPoorPosture = false;
 
     public bool interventionTriggered = false;
-
+    
     [SerializeField]
     GameObject angleValue;
 
@@ -39,6 +39,8 @@ public class PoorPostureDetection : MonoBehaviour
     public float poorPostureTime = 0f;
 
     public float poorPostureTimeThreshold = 3f;
+
+    
 
     void Start()
     {

@@ -11,12 +11,12 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Grab Interactable
+  - ' Player'
+  - Left Hand Physics
+  - Right Hand Physics
+  - Non Physics Hand
+  - Ground
   - 
   - 
   - 

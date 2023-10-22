@@ -8,15 +8,30 @@ public class AmplifiedPoseDriver : TrackedPoseDriver
     Pose localPose = new Pose();
     override protected void PerformUpdate()
     {
-        // fetch pose from the source
         PoseDataSource.TryGetDataFromSource(poseSource, out localPose);
 
-        // fiddle with the pose's data
         Vector3 euler = localPose.rotation.eulerAngles;
-        euler.y *= 1f + gain;
+
+        if (euler.x >= 180f)
+        {
+            euler.x = (euler.x - 360f) * (1f + gain);
+        }
+        else
+        {
+            euler.x *= 1f + gain;
+        }
+
+        if (euler.y >= 180f)
+        {
+            euler.y = (euler.y - 360f) * (1f + gain);
+        }
+        else
+        {
+            euler.y *= 1f + gain;
+        }
+        
         localPose.rotation.eulerAngles = euler;
 
-        // use adjusted pose to set our local transform
         SetLocalTransform(localPose.position, localPose.rotation,
           PoseDataFlags.Position | PoseDataFlags.Rotation);
     }

@@ -85,17 +85,20 @@ public class PoorPostureDetection : MonoBehaviour
         }
     }
 
-    void RecordMinHeight()
+    IEnumerator RecordMinHeight()
     {
-        m_targetDevice.TryGetFeatureValue(CommonUsages.gripButton, out bool gripValue);
-        if (gripValue)
+        yield return new WaitForSeconds(1f);
+        m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
+        Debug.Log(triggerValue);
+        if (triggerValue)
         {
             StartCoroutine(HoldButtonSlider());
             m_minHeight = Camera.main.transform.localPosition.y;
             m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
             m_isMinHeightRecorded = true;
             angleValue.SetActive(false);
-        } 
+        }
+        dataCollection.startCollectingData = true;
     }
 
     float CalculateSafeHeight(float angle)
@@ -184,8 +187,7 @@ public class PoorPostureDetection : MonoBehaviour
 
             if (m_isHeightRecorded && !m_isMinHeightRecorded )
             {
-                RecordMinHeight();
-                dataCollection.startCollectingData = true;
+                StartCoroutine(RecordMinHeight());
             }
             
             if (m_isHeightRecorded && m_isMinHeightRecorded)

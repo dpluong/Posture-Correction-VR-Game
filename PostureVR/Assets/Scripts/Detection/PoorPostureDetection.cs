@@ -74,6 +74,11 @@ public class PoorPostureDetection : MonoBehaviour
         slider.SetActive(false);
     }
 
+    public float GetHeight()
+    {
+        return m_height;
+    }
+
     void RecordHeight()
     {
         m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
@@ -85,20 +90,22 @@ public class PoorPostureDetection : MonoBehaviour
         }
     }
 
-    IEnumerator RecordMinHeight()
+    void RecordMinHeight()
     {
-        yield return new WaitForSeconds(1f);
-        m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
-        Debug.Log(triggerValue);
-        if (triggerValue)
+        if (m_centerEyeRotation.eulerAngles.x <= 17f && m_centerEyeRotation.eulerAngles.x >= 15f)
         {
-            StartCoroutine(HoldButtonSlider());
-            m_minHeight = Camera.main.transform.localPosition.y;
-            m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
-            m_isMinHeightRecorded = true;
-            angleValue.SetActive(false);
+            m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
+            //Debug.Log(triggerValue);
+            if (triggerValue)
+            {
+                StartCoroutine(HoldButtonSlider());
+                m_minHeight = Camera.main.transform.localPosition.y;
+                m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
+                m_isMinHeightRecorded = true;
+                angleValue.SetActive(false);
+            }
+            dataCollection.startCollectingData = true;
         }
-        dataCollection.startCollectingData = true;
     }
 
     float CalculateSafeHeight(float angle)
@@ -187,7 +194,7 @@ public class PoorPostureDetection : MonoBehaviour
 
             if (m_isHeightRecorded && !m_isMinHeightRecorded )
             {
-                StartCoroutine(RecordMinHeight());
+                RecordMinHeight();
             }
             
             if (m_isHeightRecorded && m_isMinHeightRecorded)

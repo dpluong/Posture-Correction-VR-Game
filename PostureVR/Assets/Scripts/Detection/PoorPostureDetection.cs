@@ -13,6 +13,7 @@ public class PoorPostureDetection : MonoBehaviour
     private InputDevice m_targetDevice;
 
     private float m_height;
+    private float cameraHeightWorldPosition;
     private float m_minHeight;
     private float m_neck;
     private Quaternion m_centerEyeRotation;
@@ -79,6 +80,11 @@ public class PoorPostureDetection : MonoBehaviour
         return m_height;
     }
 
+    public float GetCenterEyeAngle()
+    {
+        return m_centerEyeRotation.eulerAngles.x;
+    }
+
     void RecordHeight()
     {
         m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
@@ -95,7 +101,6 @@ public class PoorPostureDetection : MonoBehaviour
         if (m_centerEyeRotation.eulerAngles.x <= 17f && m_centerEyeRotation.eulerAngles.x >= 15f)
         {
             m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
-            //Debug.Log(triggerValue);
             if (triggerValue)
             {
                 StartCoroutine(HoldButtonSlider());

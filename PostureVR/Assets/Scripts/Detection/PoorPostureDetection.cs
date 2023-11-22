@@ -13,8 +13,10 @@ public class PoorPostureDetection : MonoBehaviour
     private InputDevice m_targetDevice;
 
     private float m_height;
+    private float cameraHeightWorldPosition;
     private float m_minHeight;
     private float m_neck;
+    private Quaternion m_centerEyeRotation;
 
     private bool m_isHeightRecorded = false;
     private bool m_isMinHeightRecorded = false;
@@ -73,6 +75,16 @@ public class PoorPostureDetection : MonoBehaviour
         slider.SetActive(false);
     }
 
+    public float GetHeight()
+    {
+        return m_height;
+    }
+
+    public float GetCenterEyeAngle()
+    {
+        return m_centerEyeRotation.eulerAngles.x;
+    }
+
     void RecordHeight()
     {
         m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
@@ -86,15 +98,19 @@ public class PoorPostureDetection : MonoBehaviour
 
     void RecordMinHeight()
     {
-        m_targetDevice.TryGetFeatureValue(CommonUsages.gripButton, out bool gripValue);
-        if (gripValue)
+        if (m_centerEyeRotation.eulerAngles.x <= 17f && m_centerEyeRotation.eulerAngles.x >= 15f)
         {
-            StartCoroutine(HoldButtonSlider());
-            m_minHeight = Camera.main.transform.localPosition.y;
-            m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(Camera.main.transform.eulerAngles.x * Mathf.Deg2Rad));
-            m_isMinHeightRecorded = true;
-            angleValue.SetActive(false);
-        } 
+            m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
+            if (triggerValue)
+            {
+                StartCoroutine(HoldButtonSlider());
+                m_minHeight = Camera.main.transform.localPosition.y;
+                m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
+                m_isMinHeightRecorded = true;
+                angleValue.SetActive(false);
+            }
+            dataCollection.startCollectingData = true;
+        }
     }
 
     float CalculateSafeHeight(float angle)
@@ -109,10 +125,10 @@ public class PoorPostureDetection : MonoBehaviour
         
         float currentHeight = Camera.main.transform.localPosition.y;
 
-        if (Camera.main.transform.eulerAngles.x < upperAngleThreshold)
+        if (m_centerEyeRotation.eulerAngles.x < upperAngleThreshold)
         {
-            float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
-            float safeHeight = CalculateSafeHeight(Camera.main.transform.eulerAngles.x);
+            float angle = Mathf.Round(m_centerEyeRotation.eulerAngles.x);
+            float safeHeight = CalculateSafeHeight(m_centerEyeRotation.eulerAngles.x);
         
             if (safeHeight - currentHeight >= 0.01f)
             {
@@ -128,7 +144,7 @@ public class PoorPostureDetection : MonoBehaviour
             m_isPoorPosture = true;
         }
 
-        if (Camera.main.transform.eulerAngles.x > lowerAngleThreshold)
+        if (m_centerEyeRotation.eulerAngles.x > lowerAngleThreshold)
         {
             if (m_height > currentHeight)
             {
@@ -143,13 +159,33 @@ public class PoorPostureDetection : MonoBehaviour
 
     void DisplayTiltAngle()
     {
-        float angle = Mathf.Round(Camera.main.transform.eulerAngles.x);
+        float angle = Mathf.Round(m_centerEyeRotation.eulerAngles.x);
         angleValue.GetComponent<TMPro.TextMeshProUGUI>().text = angle.ToString();
+    }
+
+    bool TryGetCenterEyeRotation()
+    {
+        InputDevice device = InputDevices.GetDeviceAtXRNode(XRNode.CenterEye);
+        if (device.isValid)
+        {
+            if (device.TryGetFeatureValue(CommonUsages.centerEyeRotation, out m_centerEyeRotation))
+            {
+                return true;
+            }
+        }
+        
+        m_centerEyeRotation = Quaternion.identity;
+        return false;
     }
     
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (!TryGetCenterEyeRotation())
+        {
+            //Debug.Log("Device is not valid or not active");
+        }
+
         if (!m_targetDevice.isValid)
         {
             TryInitialize();
@@ -164,7 +200,6 @@ public class PoorPostureDetection : MonoBehaviour
             if (m_isHeightRecorded && !m_isMinHeightRecorded )
             {
                 RecordMinHeight();
-                dataCollection.startCollectingData = true;
             }
             
             if (m_isHeightRecorded && m_isMinHeightRecorded)

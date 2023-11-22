@@ -54,12 +54,12 @@ public class DrawingController : MonoBehaviour
     
     public void HoldPhoto()
     {
-        //transform.position = photoAttachedPoint.position;
-        gameObject.GetComponent<SpriteRenderer>().enabled = true;
+        transform.position = photoAttachedPoint.position;
+        gameObject.GetComponentInChildren<SpriteRenderer>().enabled = true;
     }
 
     public void ReleasePhoto()
     {
-        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        gameObject.GetComponentInChildren<SpriteRenderer>().enabled = false;
     }
 }

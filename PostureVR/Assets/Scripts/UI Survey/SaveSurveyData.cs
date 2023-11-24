@@ -1,37 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
 public class SaveSurveyData : MonoBehaviour
 {
     string filename = "";
-
-    public enum InterventionType
-    {
-        Icon,
-        Dot,
-        Grayscale,
-        Circle
-    }
-
-    public bool isGatheringSurvey;
     public string playerName;
-    public InterventionType interventionType;
 
-
-    public void SaveData()
+    void Start()
     {
-        filename = Application.dataPath + "/" + "Survey" + "/" + playerName + ".csv";
+        filename = Application.dataPath + "/Survey/" + playerName + ".csv";
     }
 
-    public void WriteCSV(float[] scores)
+    public void WriteCSV(float[] scores, string interventionType)
     {
         TextWriter tw;
         if (!new FileInfo(filename).Exists)
         {
             tw = new StreamWriter(filename, false);
-            tw.WriteLine("Height, Angle, State, IsTriggered, Intervention");
+            tw.WriteLine("Intuitiveness, Intrusiveness, FutureUsage, Intervention");
             tw.Close();
         }
 

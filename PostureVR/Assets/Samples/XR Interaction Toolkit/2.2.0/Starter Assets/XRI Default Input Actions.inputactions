@@ -1017,7 +1017,7 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",                
+                    "name": "",
                     "id": "31d838df-4d4e-4c16-a373-b9c07d9d2e2a",
                     "path": "<XRController>{RightHand}/Primary2DAxis",
                     "interactions": "Sector(directions=12,sweepBehavior=1),Sector(directions=2,sweepBehavior=2)",
@@ -1489,6 +1489,34 @@
                     "processors": "",
                     "groups": "",
                     "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Custom",
+            "id": "04ff3052-76ca-43bc-a6d7-fd0f55e27d50",
+            "actions": [
+                {
+                    "name": "Toggle Survey",
+                    "type": "Button",
+                    "id": "0f595a8e-10d0-4a84-806f-8661e27f9f1b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "17c17b0f-e22b-479a-abc4-8a4d2cfef02d",
+                    "path": "<OculusTouchController>{RightHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Toggle Survey",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

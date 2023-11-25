@@ -2743,6 +2743,8 @@ MonoBehaviour:
   RightHandRay: {fileID: 1760028941}
   saveData: {fileID: 1975831936}
   toggleSurvey: {fileID: 6624154236133419439, guid: c348712bda248c246b8c49b3db54643f, type: 3}
+  playerTransform: {fileID: 823954838}
+  surveyDistance: 4
 --- !u!4 &572841466 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5856844300030223320, guid: 60a8ace0dd3df2648a88a6c13f768c97, type: 3}
@@ -9777,7 +9779,7 @@ RectTransform:
   m_GameObject: {fileID: 1458174896}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 735737602}
@@ -14512,7 +14514,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f3785d86f50fc748977a08b0026b77d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isGatheringSurvey: 0
   playerName: Peter
 --- !u!1001 &1999954885
 PrefabInstance:

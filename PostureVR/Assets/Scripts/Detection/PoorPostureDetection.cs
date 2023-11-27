@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.UI;
+//using UnityEngine.InputSystem;
 
 
 public class PoorPostureDetection : MonoBehaviour
 {
     public InputDeviceCharacteristics controllerCharacteristics;
     public DataCollection dataCollection;
+    //public InputActionReference rightController;
 
     private InputDevice m_targetDevice;
 
@@ -98,7 +100,7 @@ public class PoorPostureDetection : MonoBehaviour
 
     void RecordMinHeight()
     {
-        if (m_centerEyeRotation.eulerAngles.x <= 17f && m_centerEyeRotation.eulerAngles.x >= 15f)
+        if (Mathf.Round(m_centerEyeRotation.eulerAngles.x) <= 17f && Mathf.Round(m_centerEyeRotation.eulerAngles.x) >= 15f)
         {
             m_targetDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerValue);
             if (triggerValue)

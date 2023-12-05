@@ -43,7 +43,8 @@ public class PoorPostureDetection : MonoBehaviour
     public float poorPostureTime = 0f;
 
     public float poorPostureTimeThreshold = 3f;
-
+    public GameObject heightCalibration;
+    public GameObject postureInstruction;
     
 
     void Start()
@@ -202,6 +203,8 @@ public class PoorPostureDetection : MonoBehaviour
             if (m_isHeightRecorded && !m_isMinHeightRecorded )
             {
                 RecordMinHeight();
+                heightCalibration.SetActive(!heightCalibration.activeSelf);
+                postureInstruction.SetActive(!postureInstruction.activeSelf);
             }
             
             if (m_isHeightRecorded && m_isMinHeightRecorded)

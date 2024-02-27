@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
@@ -11,6 +13,8 @@ public class SurveyController : MonoBehaviour
     public InputActionReference toggleSurvey = null;
     public Transform playerTransform;
     public float surveyDistance = 5f;
+    public GameObject heightCalibration;
+    public GameObject postureInstruction;
 
     private void Awake() 
     {
@@ -39,6 +43,15 @@ public class SurveyController : MonoBehaviour
         relativePos = new Vector3(relativePos.x, surveyPanel.transform.position.y, relativePos.z);
         Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
         surveyPanel.transform.rotation = rotation;
+
+        if (heightCalibration.activeSelf)
+        {
+            postureInstruction.SetActive(false);
+        }
+        else
+        {
+            postureInstruction.SetActive(!isActive);
+        }
     }
 
     void CleanOldSurveyData()
@@ -67,7 +80,18 @@ public class SurveyController : MonoBehaviour
         Dropdown interventionType = surveyPanel.GetComponentInChildren<Dropdown>();
         saveData.WriteCSV(scores, interventionType.options[interventionType.value].text);
         CleanOldSurveyData();
-
+        if (heightCalibration.activeSelf)
+        {
+            postureInstruction.SetActive(false);
+        }
+        else
+        {
+            if (!postureInstruction.activeSelf)
+            {
+                postureInstruction.SetActive(true);
+            }
+        }
+        
     }
 
 }

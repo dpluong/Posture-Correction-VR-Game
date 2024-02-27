@@ -51,7 +51,7 @@ public class DataCollection : MonoBehaviour
 
     void CollectUserData()
     {
-        if (startCollectingData)
+        if (startCollectingData && !endCollectingData)
         {
             timer += Time.fixedDeltaTime;
             totalTimer += Time.fixedDeltaTime;
@@ -87,7 +87,7 @@ public class DataCollection : MonoBehaviour
             if (!new FileInfo(filename).Exists)
             {
                 tw = new StreamWriter(filename, false);
-                tw.WriteLine("Height, Angle, State, IsTriggered, Intervention");
+                tw.WriteLine("Height, Angle, State");
                 tw.Close();
             }
             
@@ -95,7 +95,7 @@ public class DataCollection : MonoBehaviour
 
             for (int i = 0; i < player.Count; ++i)
             {
-                tw.WriteLine(player[i].height + "," + player[i].angle + "," + player[i].postureState + "," + player[i].interventionTriggered + "," + player[i].intervention);
+                tw.WriteLine(player[i].height + "," + player[i].angle + "," + player[i].postureState);
             }
             tw.Close();
         }

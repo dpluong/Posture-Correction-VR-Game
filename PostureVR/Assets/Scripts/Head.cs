@@ -11,8 +11,8 @@ public class Head : MonoBehaviour
 
     bool CheckIfPuzzleMatched()
     {
-        if ((poorPostureDetection.GetCenterEyeAngle() >= 0f && poorPostureDetection.GetCenterEyeAngle() <= 2f)
-            || (poorPostureDetection.GetCenterEyeAngle() >= 358f && poorPostureDetection.GetCenterEyeAngle() <= 360f))
+        if ((poorPostureDetection.GetCenterEyeAngle() >= 0f && poorPostureDetection.GetCenterEyeAngle() <= 4f)
+            || (poorPostureDetection.GetCenterEyeAngle() >= 356f && poorPostureDetection.GetCenterEyeAngle() <= 360f))
         {
             return true;
         }
@@ -40,7 +40,7 @@ public class Head : MonoBehaviour
         }
         if (!poorPostureDetection.m_isPoorPosture && CheckIfPuzzleMatched())
         {
-            ring.GetComponent<SpriteRenderer>().color = Color.blue;
+            ring.GetComponent<SpriteRenderer>().color = Color.green;
             StartCoroutine(TurnOffPuzzle());
         }
     }

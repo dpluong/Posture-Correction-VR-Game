@@ -33,7 +33,7 @@ public class DataCollection : MonoBehaviour
         public int interventionTriggered; 
         public InterventionType intervention;
     }
-
+    
     [SerializeField]
     public List<Player> player;
     public bool startCollectingData = false;

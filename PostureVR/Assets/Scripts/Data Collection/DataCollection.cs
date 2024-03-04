@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEngine.XR;
 
 public enum InterventionType
 {
     Base,
     Icon,
-    Dot,
-    Environment
+    Grayscale
 }
 
 public class DataCollection : MonoBehaviour
@@ -27,8 +27,12 @@ public class DataCollection : MonoBehaviour
 
     public class Player
     {
-        public float height;
-        public float angle;
+        public float x;
+        public float y;
+        public float z;
+        public float pitch;
+        public float yaw;
+        public float roll;
         public int postureState;
         public int interventionTriggered; 
         public InterventionType intervention;
@@ -42,6 +46,9 @@ public class DataCollection : MonoBehaviour
 
     private float timer = 0f;
     private float totalTimer = 0f;
+    private bool isRecorded = false;
+
+    private Quaternion m_centerEyeRotation;
 
 
     void Start()
@@ -59,21 +66,39 @@ public class DataCollection : MonoBehaviour
             {
                 timer = 0f;
                 Player playerData = new Player();
-                playerData.height = Camera.main.transform.localPosition.y;
-                playerData.angle = Camera.main.transform.eulerAngles.x;
-                if (playerData.angle > 90f)
+
+                playerData.x = Camera.main.transform.localPosition.x;
+                playerData.y = Camera.main.transform.localPosition.y;
+                playerData.z = Camera.main.transform.localPosition.z;
+
+                playerData.pitch = m_centerEyeRotation.eulerAngles.x;
+                playerData.yaw = m_centerEyeRotation.eulerAngles.y;
+                playerData.roll = m_centerEyeRotation.eulerAngles.z;
+
+                if (playerData.pitch > 180f)
                 {
-                    playerData.angle = playerData.angle - 360f;
+                    playerData.pitch = playerData.pitch - 360f;
+                }
+
+                if (playerData.yaw > 180f)
+                {
+                    playerData.yaw = playerData.yaw - 360f;
+                }
+
+                if (playerData.roll > 180f)
+                {
+                    playerData.roll = playerData.roll - 360f;
                 }
                 
                 playerData.postureState = (poorPostureDetection.m_isPoorPosture && poorPostureDetection.poorPostureTime >= poorPostureDetection.poorPostureTimeThreshold) ? 1 : 0;
                 playerData.interventionTriggered = poorPostureDetection.interventionTriggered ? 1 : 0;
                 playerData.intervention = interventionType;
+                
                 player.Add(playerData);
             }
+
             if (totalTimer >= timeToCollectData)
             {
-                startCollectingData = false;
                 endCollectingData = true;
             }
         }
@@ -87,7 +112,7 @@ public class DataCollection : MonoBehaviour
             if (!new FileInfo(filename).Exists)
             {
                 tw = new StreamWriter(filename, false);
-                tw.WriteLine("Height, Angle, State");
+                tw.WriteLine("x,y,z,pitch,yaw,roll,state,trigger,type");
                 tw.Close();
             }
             
@@ -95,19 +120,37 @@ public class DataCollection : MonoBehaviour
 
             for (int i = 0; i < player.Count; ++i)
             {
-                tw.WriteLine(player[i].height + "," + player[i].angle + "," + player[i].postureState);
+                tw.WriteLine(player[i].x + "," + player[i].y + "," + player[i].z + ","
+                + player[i].pitch + "," + player[i].yaw + "," + player[i].roll + ","
+                + player[i].postureState + "," + player[i].interventionTriggered + "," + player[i].intervention);
             }
             tw.Close();
         }
     }
 
+    bool TryGetCenterEyeRotation()
+    {
+        InputDevice device = InputDevices.GetDeviceAtXRNode(XRNode.CenterEye);
+        if (device.isValid)
+        {
+            if (device.TryGetFeatureValue(CommonUsages.centerEyeRotation, out m_centerEyeRotation))
+            {
+                return true;
+            }
+        }
+
+        m_centerEyeRotation = Quaternion.identity;
+        return false;
+    }
+
     void FixedUpdate()
     {
+        bool canGetRotationAngle = TryGetCenterEyeRotation();
         CollectUserData();
-        if (endCollectingData)
+        if (endCollectingData && isRecorded == false)
         {
             WriteCSV();
-            endCollectingData = false;
+            isRecorded = true;
         }
     }
 }

@@ -23,9 +23,6 @@ public class FollowCamera : MonoBehaviour
         {
             Vector3 targetPosition = FindTargetPosition();
 
-            //float step = 3f * Time.deltaTime; // calculate distance to move
-            //transform.position = Vector3.MoveTowards(transform.position, targetPosition, step);
-            //MoveTowards(targetPosition);
             transform.position = targetPosition;
         }
         FaceTowardCamera();
@@ -48,7 +45,7 @@ public class FollowCamera : MonoBehaviour
 
     private void FaceTowardCamera()
     {
-        Vector3 targetDirection = cameraTransform.position - transform.position;
+        Vector3 targetDirection = -cameraTransform.position + transform.position;
 
         float singleStep = speed * Time.deltaTime;
 

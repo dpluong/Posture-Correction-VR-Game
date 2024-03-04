@@ -43,7 +43,8 @@ public class PoorPostureDetection : MonoBehaviour
     public float poorPostureTime = 0f;
 
     public float poorPostureTimeThreshold = 3f;
-    //public GameObject heightCalibration;
+    public float heightThreshold = 0.01f;
+    public GameObject heightCalibration;
     //public GameObject postureInstruction;
     
 
@@ -111,10 +112,10 @@ public class PoorPostureDetection : MonoBehaviour
                 m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
                 m_isMinHeightRecorded = true;
                 angleValue.SetActive(false);
-                //heightCalibration.SetActive(!heightCalibration.activeSelf);
+                heightCalibration.SetActive(!heightCalibration.activeSelf);
                 //postureInstruction.SetActive(!postureInstruction.activeSelf);
             }
-            dataCollection.startCollectingData = true;
+            //dataCollection.startCollectingData = true;
         }
     }
 
@@ -135,7 +136,7 @@ public class PoorPostureDetection : MonoBehaviour
             float angle = Mathf.Round(m_centerEyeRotation.eulerAngles.x);
             float safeHeight = CalculateSafeHeight(m_centerEyeRotation.eulerAngles.x);
         
-            if (safeHeight - currentHeight >= 0.01f)
+            if (safeHeight - currentHeight >= heightThreshold)
             {
                 m_isPoorPosture = true;
             }

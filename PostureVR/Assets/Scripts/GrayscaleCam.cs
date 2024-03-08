@@ -4,11 +4,11 @@ using UnityEngine.Rendering.PostProcessing;
 public class GrayscaleCam : MonoBehaviour
 {
     public PoorPostureDetection poorPostureDetection;
+    public float colorStep = 0.05f;
     ColorGrading colorGradingLayer = null;
     PostProcessVolume postProcessVolume;
 
     private float poorPostureTimeThreshold;
-    float time = 0f;
 
     void Start() 
     {
@@ -21,7 +21,7 @@ public class GrayscaleCam : MonoBehaviour
     {
         if (poorPostureDetection.m_isPoorPosture && poorPostureDetection.poorPostureTime >= poorPostureTimeThreshold)
         {
-            //postProcessVolume.profile.TryGetSettings(out colorGradingLayer);
+            poorPostureDetection.interventionTriggered = true;
             if (poorPostureDetection.poorPostureTime - poorPostureTimeThreshold >= 0.1f 
             && poorPostureDetection.poorPostureTime - poorPostureTimeThreshold <= 0.2f)
             {
@@ -31,14 +31,14 @@ public class GrayscaleCam : MonoBehaviour
             {
                 if (colorGradingLayer.saturation.value > -100f)
                 {
-                    colorGradingLayer.saturation.value -= 0.01f;
+                    colorGradingLayer.saturation.value -= colorStep;
                 }
             }             
         }
         else
         {
-            //postProcessVolume.profile.TryGetSettings(out colorGradingLayer);
             colorGradingLayer.saturation.value = 0;
+            poorPostureDetection.interventionTriggered = false;
         }
     }
 }

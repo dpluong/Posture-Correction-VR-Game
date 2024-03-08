@@ -44,6 +44,7 @@ public class PoorPostureDetection : MonoBehaviour
 
     public float poorPostureTimeThreshold = 3f;
     public float heightThreshold = 0.01f;
+    public float heightThresholdLookUp = 0.05f;
     public GameObject heightCalibration;
     //public GameObject postureInstruction;
     
@@ -126,6 +127,13 @@ public class PoorPostureDetection : MonoBehaviour
         return safeHeight;
     }
 
+    float CalculateSafeHeightLookUp(float angle)
+    {
+        float angleRad = angle * Mathf.Deg2Rad;
+        float safeHeight = m_height - m_neck + m_neck * Mathf.Abs(Mathf.Cos(angleRad)) + heightThresholdLookUp;
+        return safeHeight;
+    }
+
     void PostureDetection()
     {
         
@@ -147,9 +155,30 @@ public class PoorPostureDetection : MonoBehaviour
         }
         else
         {
+            if (m_centerEyeRotation.eulerAngles.x < 180f)
+                m_isPoorPosture = true;
+        }
+
+        if (m_centerEyeRotation.eulerAngles.x < 360f && m_centerEyeRotation.eulerAngles.x >= lowerAngleThreshold)
+        {
+            float angle = Mathf.Round(m_centerEyeRotation.eulerAngles.x);
+            float safeHeight = CalculateSafeHeightLookUp(m_centerEyeRotation.eulerAngles.x);
+
+            if (safeHeight - currentHeight >= heightThreshold)
+            {
+                m_isPoorPosture = true;
+            }
+            else
+            {
+                m_isPoorPosture = false;
+            }
+        }
+        else if (m_centerEyeRotation.eulerAngles.x < lowerAngleThreshold && m_centerEyeRotation.eulerAngles.x > 180f)
+        {
             m_isPoorPosture = true;
         }
 
+        /*
         if (m_centerEyeRotation.eulerAngles.x > lowerAngleThreshold)
         {
             if (m_height > currentHeight)
@@ -160,7 +189,7 @@ public class PoorPostureDetection : MonoBehaviour
             {
                 m_isPoorPosture = false;
             }
-        }
+        }*/
     }
 
     void DisplayTiltAngle()

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a0d8435b7849255408960346ae746516
+guid: c8d62e530e382254eab02f481c397e35
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -117,13 +117,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: white_ring_0
+      name: wrong-posture-side-view_0
       rect:
         serializedVersion: 2
-        x: 63
-        y: 63
-        width: 449
-        height: 898
+        x: 89
+        y: 352
+        width: 28
+        height: 37
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,29 +131,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 57c580149b6447f42ab5bc5cc7390839
-      internalID: 1598958462
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: white_ring_1
-      rect:
-        serializedVersion: 2
-        x: 513
-        y: 65
-        width: 449
-        height: 898
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cae2ddbb7cc39c34ea22d566a7bb80a2
-      internalID: 844724519
+      spriteID: f187096f29b99f345bb32fcc9a3bec09
+      internalID: 853779185
       vertices: []
       indices: 
       edges: []
@@ -169,8 +148,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      white_ring_1: 844724519
-      white_ring_0: 1598958462
+      wrong-posture-side-view_0: 853779185
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

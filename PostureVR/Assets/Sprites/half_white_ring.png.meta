@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a0d8435b7849255408960346ae746516
+guid: c69e4973a39dcbe458727b3259cb094d
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -42,7 +42,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -117,13 +117,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: white_ring_0
+      name: half_white_ring_0
       rect:
         serializedVersion: 2
-        x: 63
+        x: 0
         y: 63
         width: 449
-        height: 898
+        height: 449
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,20 +131,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 57c580149b6447f42ab5bc5cc7390839
-      internalID: 1598958462
+      spriteID: 3f601986d3ec54346b6bd39c43e726e0
+      internalID: 179300464
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: white_ring_1
+      name: half_white_ring_1
       rect:
         serializedVersion: 2
-        x: 513
-        y: 65
+        x: 0
+        y: 513
         width: 449
-        height: 898
+        height: 449
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -152,8 +152,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: cae2ddbb7cc39c34ea22d566a7bb80a2
-      internalID: 844724519
+      spriteID: 8d8c44e9d1b5ff94fac8738afa7ae3b8
+      internalID: 750410649
       vertices: []
       indices: 
       edges: []
@@ -169,8 +169,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      white_ring_1: 844724519
-      white_ring_0: 1598958462
+      half_white_ring_0: 179300464
+      half_white_ring_1: 750410649
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

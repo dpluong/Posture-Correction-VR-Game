@@ -8,14 +8,17 @@ public class AngleIndicator : MonoBehaviour
     public PoorPostureDetection poorPostureDetection;
     public Image angleUpperHalf;
     public Image angleLowerHalf;
+    public Image headsetImage;
     public Transform headset;
+    public Image correctPosture;
+    public Image wrongPosture;
     public float colorThreshold = 5f;
     public float degreesPerSecond = 5f;
-    public float testAngle = 0f;
+   // public float testAngle = 0f;
 
     void RotateHeadset()
     {
-        float angle = testAngle;
+        float angle = poorPostureDetection.GetCenterEyeAngle();
         if (angle >= 0 && angle <= 180f)
         {
             if (angle > 90f)
@@ -24,7 +27,11 @@ public class AngleIndicator : MonoBehaviour
             }
 
             angleLowerHalf.fillAmount = angle / 90f;
-            if (angle > poorPostureDetection.upperAngleThreshold && angle < poorPostureDetection.upperAngleThreshold + colorThreshold)
+            if (angle <= poorPostureDetection.upperAngleThreshold)
+            {
+                angleLowerHalf.color = Color.green;
+            }
+            else if (angle > poorPostureDetection.upperAngleThreshold && angle < poorPostureDetection.upperAngleThreshold + colorThreshold)
             {
                 angleLowerHalf.color = Color.yellow;
             }
@@ -34,7 +41,7 @@ public class AngleIndicator : MonoBehaviour
             }
 
             Vector3 currentRotation = headset.rotation.eulerAngles;
-            headset.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, angle);
+            headset.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, -angle);
         }
         else
         {
@@ -45,7 +52,11 @@ public class AngleIndicator : MonoBehaviour
             }
 
             angleUpperHalf.fillAmount = angle / 90f;
-            if (angle > poorPostureDetection.upperAngleThreshold && angle < poorPostureDetection.upperAngleThreshold + colorThreshold)
+            if (angle <= poorPostureDetection.upperAngleThreshold)
+            {
+                angleLowerHalf.color = Color.green;
+            }
+            else if (angle > poorPostureDetection.upperAngleThreshold && angle < poorPostureDetection.upperAngleThreshold + colorThreshold)
             {
                 angleUpperHalf.color = Color.yellow;
             }
@@ -57,12 +68,30 @@ public class AngleIndicator : MonoBehaviour
             Vector3 currentRotation = headset.rotation.eulerAngles;
             headset.rotation = Quaternion.Euler(currentRotation.x, currentRotation.y, angle);
         }
+    }
 
+    void DisplayPostureIcon()
+    {
 
     }
    
     void Update()
     {
         RotateHeadset();
+        if (poorPostureDetection.m_isPoorPosture && poorPostureDetection.poorPostureTime > poorPostureDetection.poorPostureTimeThreshold)
+        {
+            wrongPosture.color = new Color(wrongPosture.color.r, wrongPosture.color.g, wrongPosture.color.b, 1f);
+            angleUpperHalf.color = new Color(angleUpperHalf.color.r, angleUpperHalf.color.g, angleUpperHalf.color.b, 1f);
+            angleLowerHalf.color = new Color(angleLowerHalf.color.r, angleLowerHalf.color.g, angleLowerHalf.color.b, 1f);
+            headsetImage.color = new Color(headsetImage.color.r, headsetImage.color.g, headsetImage.color.b, 1f);
+        }
+        else
+        {
+            wrongPosture.color = new Color(wrongPosture.color.r, wrongPosture.color.g, wrongPosture.color.b, 0f);
+            angleUpperHalf.color = new Color(angleUpperHalf.color.r, angleUpperHalf.color.g, angleUpperHalf.color.b, 0f);
+            angleLowerHalf.color = new Color(angleLowerHalf.color.r, angleLowerHalf.color.g, angleLowerHalf.color.b, 0f);
+            headsetImage.color = new Color(headsetImage.color.r, headsetImage.color.g, headsetImage.color.b, 0f);
+            correctPosture.color = new Color(correctPosture.color.r, correctPosture.color.g, correctPosture.color.b, 1f);
+        }
     }
 }

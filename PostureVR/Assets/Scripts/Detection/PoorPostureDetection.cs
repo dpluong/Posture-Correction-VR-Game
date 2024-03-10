@@ -110,7 +110,8 @@ public class PoorPostureDetection : MonoBehaviour
             {
                 StartCoroutine(HoldButtonSlider());
                 m_minHeight = Camera.main.transform.localPosition.y;
-                m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
+                //m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
+                m_neck = (m_height - m_minHeight) / Mathf.Abs(Mathf.Sin(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
                 m_isMinHeightRecorded = true;
                 angleValue.SetActive(false);
                 heightCalibration.SetActive(!heightCalibration.activeSelf);
@@ -123,14 +124,16 @@ public class PoorPostureDetection : MonoBehaviour
     float CalculateSafeHeight(float angle)
     {
         float angleRad = angle * Mathf.Deg2Rad;
-        float safeHeight = m_height - m_neck + m_neck * Mathf.Cos(angleRad);
+        //float safeHeight = m_height - m_neck + m_neck * Mathf.Cos(angleRad);
+        float safeHeight = m_height - m_neck * Mathf.Abs(Mathf.Sin(angleRad));
         return safeHeight;
     }
 
     float CalculateSafeHeightLookUp(float angle)
     {
         float angleRad = angle * Mathf.Deg2Rad;
-        float safeHeight = m_height - m_neck + m_neck * Mathf.Abs(Mathf.Cos(angleRad)) + heightThresholdLookUp;
+        // float safeHeight = m_height - m_neck + m_neck * Mathf.Abs(Mathf.Cos(angleRad)) + heightThresholdLookUp;
+        float safeHeight = m_height + m_neck * Mathf.Abs(Mathf.Sin(angleRad));
         return safeHeight;
     }
 

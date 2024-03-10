@@ -32,16 +32,6 @@ public class IconPosition : MonoBehaviour
         return cameraTransform.position + (cameraTransform.forward * distanceZ) + (cameraTransform.right * distanceX) + (cameraTransform.up * distanceY);
     }
 
-    private void MoveTowards(Vector3 targetPosition)
-    {
-        transform.position += (targetPosition - transform.position) * 0.025f;
-    }
-
-    private bool ReachedPosition(Vector3 targetPosition)
-    {
-        return Vector3.Distance(targetPosition, transform.position) < 0.1f;
-    }
-
     private void FaceTowardCamera()
     {
         Vector3 targetDirection = -cameraTransform.position + transform.position;

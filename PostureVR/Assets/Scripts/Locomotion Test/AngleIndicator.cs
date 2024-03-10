@@ -8,13 +8,17 @@ public class AngleIndicator : MonoBehaviour
     public PoorPostureDetection poorPostureDetection;
     public Image angleUpperHalf;
     public Image angleLowerHalf;
-    public Image headsetImage;
+    public GameObject angleImage;
     public Transform headset;
-    public Image correctPosture;
-    public Image wrongPosture;
-    public float colorThreshold = 5f;
+    public GameObject correctPosture;
+    public GameObject wrongPosture;
+    public float colorThreshold = 10f;
     public float degreesPerSecond = 5f;
    // public float testAngle = 0f;
+
+    private void Start() {
+        correctPosture.SetActive(false);
+    }
 
     void RotateHeadset()
     {
@@ -31,11 +35,7 @@ public class AngleIndicator : MonoBehaviour
             {
                 angleLowerHalf.color = Color.green;
             }
-            else if (angle > poorPostureDetection.upperAngleThreshold && angle < poorPostureDetection.upperAngleThreshold + colorThreshold)
-            {
-                angleLowerHalf.color = Color.yellow;
-            }
-            else if (angle > poorPostureDetection.upperAngleThreshold + colorThreshold)
+            else if (angle > poorPostureDetection.upperAngleThreshold)
             {
                 angleLowerHalf.color = Color.red;
             }
@@ -54,13 +54,9 @@ public class AngleIndicator : MonoBehaviour
             angleUpperHalf.fillAmount = angle / 90f;
             if (angle <= poorPostureDetection.upperAngleThreshold)
             {
-                angleLowerHalf.color = Color.green;
+                angleUpperHalf.color = Color.green;
             }
-            else if (angle > poorPostureDetection.upperAngleThreshold && angle < poorPostureDetection.upperAngleThreshold + colorThreshold)
-            {
-                angleUpperHalf.color = Color.yellow;
-            }
-            else if (angle > poorPostureDetection.upperAngleThreshold + colorThreshold)
+            else if (angle > poorPostureDetection.upperAngleThreshold)
             {
                 angleUpperHalf.color = Color.red;
             }
@@ -70,9 +66,11 @@ public class AngleIndicator : MonoBehaviour
         }
     }
 
-    void DisplayPostureIcon()
+    IEnumerator TurnOffIndicator()
     {
-
+        yield return new WaitForSeconds(2f);
+        if (!poorPostureDetection.m_isPoorPosture)
+            correctPosture.SetActive(false);
     }
    
     void Update()
@@ -80,18 +78,19 @@ public class AngleIndicator : MonoBehaviour
         RotateHeadset();
         if (poorPostureDetection.m_isPoorPosture && poorPostureDetection.poorPostureTime > poorPostureDetection.poorPostureTimeThreshold)
         {
-            wrongPosture.color = new Color(wrongPosture.color.r, wrongPosture.color.g, wrongPosture.color.b, 1f);
-            angleUpperHalf.color = new Color(angleUpperHalf.color.r, angleUpperHalf.color.g, angleUpperHalf.color.b, 1f);
-            angleLowerHalf.color = new Color(angleLowerHalf.color.r, angleLowerHalf.color.g, angleLowerHalf.color.b, 1f);
-            headsetImage.color = new Color(headsetImage.color.r, headsetImage.color.g, headsetImage.color.b, 1f);
+            angleImage.SetActive(true);
+            wrongPosture.SetActive(true);
+            correctPosture.SetActive(true);
+            Image correct = correctPosture.GetComponent<Image>();
+            correct.color = new Color(correct.color.r, correct.color.g, correct.color.b, 0.5f);
         }
         else
         {
-            wrongPosture.color = new Color(wrongPosture.color.r, wrongPosture.color.g, wrongPosture.color.b, 0f);
-            angleUpperHalf.color = new Color(angleUpperHalf.color.r, angleUpperHalf.color.g, angleUpperHalf.color.b, 0f);
-            angleLowerHalf.color = new Color(angleLowerHalf.color.r, angleLowerHalf.color.g, angleLowerHalf.color.b, 0f);
-            headsetImage.color = new Color(headsetImage.color.r, headsetImage.color.g, headsetImage.color.b, 0f);
-            correctPosture.color = new Color(correctPosture.color.r, correctPosture.color.g, correctPosture.color.b, 1f);
+            angleImage.SetActive(false);
+            wrongPosture.SetActive(false);
+            Image correct = correctPosture.GetComponent<Image>();
+            correct.color = new Color(correct.color.r, correct.color.g, correct.color.b, 1f);
+            StartCoroutine(TurnOffIndicator());
         }
     }
 }

@@ -389,7 +389,7 @@ MonoBehaviour:
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 2
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 0
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -664,79 +664,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 271221192}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &307487840
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 307487842}
-  - component: {fileID: 307487841}
-  m_Layer: 0
-  m_Name: PathController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &307487841
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 307487840}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bfc21ff57ce92949bd8fc46d9c2ec36, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  points:
-  - {fileID: 4975747785202982242}
-  - {fileID: 2000792233}
-  - {fileID: 46357976}
-  - {fileID: 271221193}
-  - {fileID: 592696731}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  radius: 0.5
-  layerCollided:
-    serializedVersion: 2
-    m_Bits: 128
-  dataCollection: {fileID: 5740606496368405636}
-  scorePanel: {fileID: 385103173}
-  spheres: {fileID: 0}
-  distance: 1.5
---- !u!4 &307487842
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 307487840}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &381046096
 GameObject:
   m_ObjectHideFlags: 0
@@ -1412,7 +1339,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8093438230327260226, guid: 797803adb2db5fb42afcbe7953426afc, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8093438230327260226, guid: 797803adb2db5fb42afcbe7953426afc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1549,7 +1476,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1740408187476948215, guid: 7e4bc1e353533e54c83f9b91db3e55ae, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7e4bc1e353533e54c83f9b91db3e55ae, type: 3}
@@ -1704,7 +1631,7 @@ MonoBehaviour:
   m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 2
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 0
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -2355,7 +2282,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 7968889629116183214}
   distanceZ: 0.5
-  distanceX: -0.2
+  distanceX: -0.1
   distanceY: -0.1
   speed: 1
 --- !u!114 &2099036981
@@ -2365,7 +2292,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2099036978}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f12105179574d8a428a89de0d74321d6, type: 3}
   m_Name: 
@@ -2373,10 +2300,10 @@ MonoBehaviour:
   poorPostureDetection: {fileID: 855018315}
   angleUpperHalf: {fileID: 1164592535}
   angleLowerHalf: {fileID: 116366867}
-  headsetImage: {fileID: 1744788838}
+  angleImage: {fileID: 1482892321}
   headset: {fileID: 1801239815}
-  correctPosture: {fileID: 962236558}
-  wrongPosture: {fileID: 1934019097}
+  correctPosture: {fileID: 962236556}
+  wrongPosture: {fileID: 1934019095}
   colorThreshold: 5
   degreesPerSecond: 5
 --- !u!4 &20567021237626254
@@ -3634,7 +3561,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8570556463989175350}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -3.11, y: 0, z: -1.36}
+  m_LocalPosition: {x: -5.15, y: 0, z: -0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7008,7 +6935,7 @@ MonoBehaviour:
   poorPostureDetection: {fileID: 855018315}
   playerName: name
   timesPerSecond: 11
-  interventionType: 2
+  interventionType: 1
   player: []
   startCollectingData: 0
   endCollectingData: 0

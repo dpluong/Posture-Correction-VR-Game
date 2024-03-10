@@ -43,7 +43,9 @@ public class PoorPostureDetection : MonoBehaviour
     public float poorPostureTime = 0f;
 
     public float poorPostureTimeThreshold = 3f;
-    //public GameObject heightCalibration;
+    public float heightThreshold = 0.01f;
+    public float heightThresholdLookUp = 0.05f;
+    public GameObject heightCalibration;
     //public GameObject postureInstruction;
     
 
@@ -108,20 +110,30 @@ public class PoorPostureDetection : MonoBehaviour
             {
                 StartCoroutine(HoldButtonSlider());
                 m_minHeight = Camera.main.transform.localPosition.y;
-                m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
+                //m_neck = (m_height - m_minHeight) / (1f - Mathf.Cos(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
+                m_neck = (m_height - m_minHeight) / Mathf.Abs(Mathf.Sin(m_centerEyeRotation.eulerAngles.x * Mathf.Deg2Rad));
                 m_isMinHeightRecorded = true;
                 angleValue.SetActive(false);
-                //heightCalibration.SetActive(!heightCalibration.activeSelf);
+                heightCalibration.SetActive(!heightCalibration.activeSelf);
                 //postureInstruction.SetActive(!postureInstruction.activeSelf);
             }
-            dataCollection.startCollectingData = true;
+            //dataCollection.startCollectingData = true;
         }
     }
 
     float CalculateSafeHeight(float angle)
     {
         float angleRad = angle * Mathf.Deg2Rad;
-        float safeHeight = m_height - m_neck + m_neck * Mathf.Cos(angleRad);
+        //float safeHeight = m_height - m_neck + m_neck * Mathf.Cos(angleRad);
+        float safeHeight = m_height - m_neck * Mathf.Abs(Mathf.Sin(angleRad));
+        return safeHeight;
+    }
+
+    float CalculateSafeHeightLookUp(float angle)
+    {
+        float angleRad = angle * Mathf.Deg2Rad;
+        // float safeHeight = m_height - m_neck + m_neck * Mathf.Abs(Mathf.Cos(angleRad)) + heightThresholdLookUp;
+        float safeHeight = m_height + m_neck * Mathf.Abs(Mathf.Sin(angleRad));
         return safeHeight;
     }
 
@@ -135,7 +147,7 @@ public class PoorPostureDetection : MonoBehaviour
             float angle = Mathf.Round(m_centerEyeRotation.eulerAngles.x);
             float safeHeight = CalculateSafeHeight(m_centerEyeRotation.eulerAngles.x);
         
-            if (safeHeight - currentHeight >= 0.01f)
+            if (safeHeight - currentHeight >= heightThreshold)
             {
                 m_isPoorPosture = true;
             }
@@ -146,9 +158,30 @@ public class PoorPostureDetection : MonoBehaviour
         }
         else
         {
+            if (m_centerEyeRotation.eulerAngles.x < 180f)
+                m_isPoorPosture = true;
+        }
+
+        if (m_centerEyeRotation.eulerAngles.x < 360f && m_centerEyeRotation.eulerAngles.x >= lowerAngleThreshold)
+        {
+            float angle = Mathf.Round(m_centerEyeRotation.eulerAngles.x);
+            float safeHeight = CalculateSafeHeightLookUp(m_centerEyeRotation.eulerAngles.x);
+
+            if (safeHeight - currentHeight >= heightThreshold)
+            {
+                m_isPoorPosture = true;
+            }
+            else
+            {
+                m_isPoorPosture = false;
+            }
+        }
+        else if (m_centerEyeRotation.eulerAngles.x < lowerAngleThreshold && m_centerEyeRotation.eulerAngles.x > 180f)
+        {
             m_isPoorPosture = true;
         }
 
+        /*
         if (m_centerEyeRotation.eulerAngles.x > lowerAngleThreshold)
         {
             if (m_height > currentHeight)
@@ -159,7 +192,7 @@ public class PoorPostureDetection : MonoBehaviour
             {
                 m_isPoorPosture = false;
             }
-        }
+        }*/
     }
 
     void DisplayTiltAngle()
